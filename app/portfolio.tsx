@@ -29,6 +29,22 @@ function ScrollArrow() {
 }
 
 function ProjectArtwork({ project, large = false }: { project: Project; large?: boolean }) {
+  if (project.id === "grvl" && large) {
+    return (
+      <div className="artwork artwork-grvl-video">
+        <video
+          className="grvl-case-video"
+          src="/assets/projects/grvl/GRVL-video.mp4"
+          autoPlay
+          muted
+          playsInline
+          preload="auto"
+          aria-label="GRVL project animation"
+        />
+      </div>
+    );
+  }
+
   if (project.visual === "image") {
     return (
       <div className="artwork artwork-image">
