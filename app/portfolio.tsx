@@ -234,6 +234,8 @@ function HeroExplorer({
   const portraitRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const locationRef = useRef<HTMLDivElement>(null);
+  const skillsTimelineRef = useRef<ReturnType<typeof gsap.timeline> | null>(null);
+  const skillsClosingRef = useRef(false);
   const [aboutConnector, setAboutConnector] = useState<AboutConnectorGeometry | null>(null);
   const [skillsConnector, setSkillsConnector] = useState<SkillsConnectorGeometry | null>(null);
   const [workingConnector, setWorkingConnector] = useState<WorkingConnectorGeometry | null>(null);
@@ -435,6 +437,93 @@ function HeroExplorer({
     };
   }, [activePanel, controlsOffset]);
 
+  useLayoutEffect(() => {
+    if (activePanel !== "skills" || !skillsConnector) return;
+
+    const panel = skillsPanelRef.current;
+    const svg = explorerRef.current?.querySelector<SVGSVGElement>(".skills-connector");
+    if (!panel || !svg) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const mobileLayout = window.matchMedia("(max-width: 840px)").matches;
+    if (reduceMotion || mobileLayout) {
+      skillsTimelineRef.current = null;
+      skillsClosingRef.current = false;
+      return;
+    }
+
+    const rootPath = svg.querySelector<SVGPathElement>(".skills-path-root");
+    const mainTrunks = Array.from(svg.querySelectorAll<SVGPathElement>(".skills-path-main-trunk"));
+    const categoryPaths = Array.from(svg.querySelectorAll<SVGPathElement>(".skills-path-category"));
+    const groupStems = Array.from(svg.querySelectorAll<SVGPathElement>(".skills-path-group-stem"));
+    const leafTrunks = Array.from(svg.querySelectorAll<SVGPathElement>(".skills-path-leaf-trunk"));
+    const leafPaths = Array.from(svg.querySelectorAll<SVGPathElement>(".skills-path-leaf"));
+    const categoryLabels = Array.from(panel.querySelectorAll<HTMLElement>(".skills-category-label"));
+    const leafLabels = Array.from(panel.querySelectorAll<HTMLElement>(".skills-leaf-label"));
+    const allPaths = [
+      rootPath,
+      ...mainTrunks,
+      ...categoryPaths,
+      ...groupStems,
+      ...leafTrunks,
+      ...leafPaths,
+    ].filter((path): path is SVGPathElement => Boolean(path));
+
+    allPaths.forEach((path) => {
+      const length = Math.max(path.getTotalLength(), 1);
+      gsap.set(path, {
+        opacity: 1,
+        strokeDasharray: length,
+        strokeDashoffset: length,
+      });
+    });
+    gsap.set([...categoryLabels, ...leafLabels], { autoAlpha: 0 });
+
+    const timeline = gsap.timeline({ paused: true, defaults: { ease: "power2.inOut" } });
+    timeline
+      .to(rootPath, { strokeDashoffset: 0, duration: 0.34 })
+      .to(mainTrunks, { strokeDashoffset: 0, duration: 0.44 }, "-=0.02")
+      .to(categoryPaths, { strokeDashoffset: 0, duration: 0.32 })
+      .to(categoryLabels, { autoAlpha: 1, duration: 0.18 }, "-=0.06")
+      .to(groupStems, { strokeDashoffset: 0, duration: 0.3 }, "-=0.02")
+      .to(leafTrunks, { strokeDashoffset: 0, duration: 0.38 })
+      .to(leafPaths, { strokeDashoffset: 0, duration: 0.28 })
+      .to(leafLabels, { autoAlpha: 1, duration: 0.2 }, "-=0.06");
+
+    skillsTimelineRef.current = timeline;
+    skillsClosingRef.current = false;
+    timeline.play(0);
+
+    return () => {
+      if (skillsTimelineRef.current === timeline) skillsTimelineRef.current = null;
+      timeline.kill();
+      gsap.set(allPaths, { clearProps: "opacity,strokeDasharray,strokeDashoffset" });
+      gsap.set([...categoryLabels, ...leafLabels], { clearProps: "opacity,visibility" });
+    };
+  }, [activePanel, skillsConnector]);
+
+  const handlePanelSelect = (panel: HeroPanel) => {
+    const skillsTimeline = skillsTimelineRef.current;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (
+      activePanel === "skills" &&
+      skillsTimeline &&
+      !reduceMotion &&
+      !skillsClosingRef.current
+    ) {
+      skillsClosingRef.current = true;
+      skillsTimeline.eventCallback("onReverseComplete", () => {
+        skillsClosingRef.current = false;
+        onSelect(panel);
+      });
+      skillsTimeline.reverse();
+      return;
+    }
+
+    if (!skillsClosingRef.current) onSelect(panel);
+  };
+
   const connectorTop = aboutConnector
     ? Math.min(aboutConnector.startY, aboutConnector.portraitY, aboutConnector.copyY, aboutConnector.locationY)
     : 0;
@@ -484,15 +573,39 @@ function HeroExplorer({
           height={skillsConnector.height}
           aria-hidden="true"
         >
-          <path d={`M${skillsConnector.startX} ${skillsConnector.startY}H${skillsConnector.trunkX}`} />
-          <path d={`M${skillsConnector.trunkX} ${skillsConnectorTop}V${skillsConnectorBottom}`} />
+          <path
+            className="skills-path-root"
+            d={`M${skillsConnector.startX} ${skillsConnector.startY}H${skillsConnector.trunkX}`}
+          />
+          <path
+            className="skills-path-main-trunk"
+            d={`M${skillsConnector.trunkX} ${skillsConnector.startY}V${skillsConnectorTop}`}
+          />
+          <path
+            className="skills-path-main-trunk"
+            d={`M${skillsConnector.trunkX} ${skillsConnector.startY}V${skillsConnectorBottom}`}
+          />
           {skillsConnector.groups.map((group, groupIndex) => (
             <g key={skillGroups[groupIndex].id}>
-              <path d={`M${skillsConnector.trunkX} ${group.categoryY}H${group.categoryStartX}`} />
-              <path d={`M${group.categoryEndX} ${group.categoryY}H${group.leafTrunkX}`} />
-              <path d={`M${group.leafTrunkX} ${group.leafTop}V${group.leafBottom}`} />
+              <path
+                className="skills-path-category"
+                d={`M${skillsConnector.trunkX} ${group.categoryY}H${group.categoryStartX}`}
+              />
+              <path
+                className="skills-path-group-stem"
+                d={`M${group.categoryEndX} ${group.categoryY}H${group.leafTrunkX}`}
+              />
+              <path
+                className="skills-path-leaf-trunk"
+                d={`M${group.leafTrunkX} ${group.categoryY}V${group.leafTop}`}
+              />
+              <path
+                className="skills-path-leaf-trunk"
+                d={`M${group.leafTrunkX} ${group.categoryY}V${group.leafBottom}`}
+              />
               {group.leaves.map((leaf, leafIndex) => (
                 <path
+                  className="skills-path-leaf"
                   key={`${skillGroups[groupIndex].id}-${leafIndex}`}
                   d={`M${group.leafTrunkX} ${leaf.y}H${leaf.x}`}
                 />
@@ -533,7 +646,7 @@ function HeroExplorer({
             className={`hero-control ${activePanel === panel.id ? "is-active" : ""}`}
             aria-expanded={activePanel === panel.id}
             aria-controls={`hero-panel-${panel.id}`}
-            onClick={() => onSelect(panel.id)}
+            onClick={() => handlePanelSelect(panel.id)}
           >
             <span className="hero-control-symbol" aria-hidden="true">
               {activePanel === panel.id ? "−" : "+"}

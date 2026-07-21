@@ -559,6 +559,14 @@ a:focus-visible {
   font-size: clamp(10px, 0.75vw, 12px);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .skills-connector path,
+  .hero-tree-skills .skills-category-label,
+  .hero-tree-skills .skills-leaf-label {
+    opacity: 0;
+  }
+}
+
 .skills-mobile-list {
   display: none;
 }
