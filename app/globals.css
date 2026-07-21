@@ -545,7 +545,7 @@ a:focus-visible {
 
 .skills-category-label {
   justify-self: start;
-  font-size: clamp(11px, 0.82vw, 13px);
+  font-size: clamp(13px, 0.95vw, 15px);
 }
 
 .skills-leaves {
@@ -556,7 +556,7 @@ a:focus-visible {
 }
 
 .skills-leaf-label {
-  font-size: clamp(10px, 0.75vw, 12px);
+  font-size: clamp(12px, 0.86vw, 14px);
 }
 
 @media (prefers-reduced-motion: no-preference) and (min-width: 841px) {
@@ -587,13 +587,13 @@ a:focus-visible {
 .about-tree-location span {
   display: block;
   margin-bottom: 9px;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.07em;
 }
 
 .about-tree-copy p {
   margin: 0;
-  font-size: clamp(14px, 1.1vw, 17px);
+  font-size: clamp(16px, 1.25vw, 19px);
   letter-spacing: -0.02em;
   line-height: 1.34;
 }
@@ -615,11 +615,11 @@ a:focus-visible {
   padding-top: 12px;
   border-top: 1px solid var(--hairline);
   text-align: center;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .about-tree-location strong {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
 }
 
@@ -672,18 +672,18 @@ a:focus-visible {
 
 .working-principle-heading span {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .working-principle-heading strong {
-  font-size: clamp(11px, 0.9vw, 14px);
+  font-size: clamp(13px, 1vw, 16px);
   font-weight: 500;
 }
 
 .working-principle p {
   max-width: 66ch;
   margin: 10px 0 0 38px;
-  font-size: clamp(13px, 0.98vw, 15px);
+  font-size: clamp(15px, 1.08vw, 17px);
   letter-spacing: -0.018em;
   line-height: 1.34;
 }
@@ -1753,7 +1753,7 @@ a:focus-visible {
   }
 
   .about-tree-copy p {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .about-profile {
@@ -1791,13 +1791,13 @@ a:focus-visible {
   }
 
   .working-principle-heading strong {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .working-principle p {
     max-width: 620px;
     margin-top: 9px;
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .scroll-cue {

@@ -156,6 +156,8 @@ function Intro() {
 
 type HeroPanel = "about" | "skills" | "working";
 
+const HERO_TREE_TIME_SCALE = 1.5;
+
 const heroPanelLabels: Array<{ id: HeroPanel; label: string }> = [
   { id: "about", label: "about me" },
   { id: "skills", label: "technical skills" },
@@ -519,7 +521,7 @@ function HeroExplorer({
 
     panelTimelines.about = timeline;
     panelClosingRef.current = false;
-    timeline.play(0);
+    timeline.timeScale(HERO_TREE_TIME_SCALE).play(0);
 
     return () => {
       if (panelTimelines.about === timeline) {
@@ -587,7 +589,7 @@ function HeroExplorer({
 
     panelTimelines.skills = timeline;
     panelClosingRef.current = false;
-    timeline.play(0);
+    timeline.timeScale(HERO_TREE_TIME_SCALE).play(0);
 
     return () => {
       if (panelTimelines.skills === timeline) {
@@ -646,7 +648,7 @@ function HeroExplorer({
 
     panelTimelines.working = timeline;
     panelClosingRef.current = false;
-    timeline.play(0);
+    timeline.timeScale(HERO_TREE_TIME_SCALE).play(0);
 
     return () => {
       if (panelTimelines.working === timeline) {
