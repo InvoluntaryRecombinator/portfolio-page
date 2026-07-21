@@ -80,28 +80,41 @@ function ProjectArtwork({ project, large = false }: { project: Project; large?: 
   );
 }
 
+function IntroContent({ master = false }: { master?: boolean }) {
+  return (
+    <div className={`intro-grid ${master ? "intro-grid-master" : ""}`}>
+      <span className="intro-kicker">PORTFOLIO / INDEX</span>
+      <span className="intro-count">001—004</span>
+      <div className="intro-title">
+        <span className="intro-word"><span>YOUR</span></span>
+        <span className="intro-word intro-word-right"><span>NAME</span></span>
+      </div>
+      <div className="intro-foot">
+        <span>DESIGN + DEVELOPMENT</span>
+        <span>ASSEMBLING INTERFACE</span>
+      </div>
+      <span className="intro-accent" />
+    </div>
+  );
+}
+
 function Intro() {
   return (
     <div className="intro" aria-hidden="true">
       <div className="intro-panels">
-        <span className="intro-panel" />
-        <span className="intro-panel" />
-        <span className="intro-panel" />
-        <span className="intro-panel" />
+        {[0, 1, 2, 3].map((column) => (
+          <div
+            className="intro-panel"
+            key={column}
+            style={{ "--intro-column": column } as React.CSSProperties}
+          >
+            <div className="intro-panel-content">
+              <IntroContent />
+            </div>
+          </div>
+        ))}
       </div>
-      <div className="intro-grid">
-        <span className="intro-kicker">PORTFOLIO / INDEX</span>
-        <span className="intro-count">001—004</span>
-        <div className="intro-title">
-          <span className="intro-word"><span>YOUR</span></span>
-          <span className="intro-word intro-word-right"><span>NAME</span></span>
-        </div>
-        <div className="intro-foot">
-          <span>DESIGN + DEVELOPMENT</span>
-          <span>ASSEMBLING INTERFACE</span>
-        </div>
-        <span className="intro-accent" />
-      </div>
+      <IntroContent master />
     </div>
   );
 }
@@ -114,21 +127,298 @@ const heroPanelLabels: Array<{ id: HeroPanel; label: string }> = [
   { id: "working", label: "working style" },
 ];
 
+const skillGroups = [
+  {
+    id: "languages",
+    label: "LANGUAGES & FRAMEWORKS",
+    skills: ["PYTHON", "JAVASCRIPT", "REACT.JS / NODE.JS", "SQL", "JSON"],
+  },
+  {
+    id: "systems",
+    label: "DATA & AI SYSTEMS",
+    skills: [
+      "AGENTIC WORKFLOWS",
+      "LLM EVALUATION & RED TEAMING",
+      "PROMPT ENGINEERING",
+      "STRUCTURED DATA EXTRACTION",
+    ],
+  },
+  {
+    id: "execution",
+    label: "WORKFLOW & EXECUTION",
+    skills: [
+      "AI-ASSISTED DEVELOPMENT",
+      "QUALITY AUDITING",
+      "INFORMATION RETRIEVAL & SYNTHESIS",
+      "PROJECT COORDINATION",
+    ],
+  },
+] as const;
+
+type AboutConnectorGeometry = {
+  width: number;
+  height: number;
+  startX: number;
+  startY: number;
+  trunkX: number;
+  portraitX: number;
+  portraitY: number;
+  copyX: number;
+  copyY: number;
+  locationX: number;
+  locationY: number;
+};
+
+type SkillsConnectorGroupGeometry = {
+  categoryStartX: number;
+  categoryEndX: number;
+  categoryY: number;
+  leafTrunkX: number;
+  leafTop: number;
+  leafBottom: number;
+  leaves: Array<{ x: number; y: number }>;
+};
+
+type SkillsConnectorGeometry = {
+  width: number;
+  height: number;
+  startX: number;
+  startY: number;
+  trunkX: number;
+  groups: SkillsConnectorGroupGeometry[];
+};
+
 function HeroExplorer({
   activePanel,
   onSelect,
-  skillsTreeRef,
 }: {
   activePanel: HeroPanel | null;
   onSelect: (panel: HeroPanel) => void;
-  skillsTreeRef: React.RefObject<HTMLDivElement | null>;
 }) {
+  const explorerRef = useRef<HTMLDivElement>(null);
+  const aboutControlRef = useRef<HTMLButtonElement>(null);
+  const skillsControlRef = useRef<HTMLButtonElement>(null);
+  const skillsPanelRef = useRef<HTMLDivElement>(null);
+  const portraitRef = useRef<HTMLDivElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
+  const locationRef = useRef<HTMLDivElement>(null);
+  const [aboutConnector, setAboutConnector] = useState<AboutConnectorGeometry | null>(null);
+  const [skillsConnector, setSkillsConnector] = useState<SkillsConnectorGeometry | null>(null);
+  const controlsOffset = 56;
+
+  useLayoutEffect(() => {
+    if (activePanel !== "about") return;
+
+    const explorer = explorerRef.current;
+    const control = aboutControlRef.current;
+    const portrait = portraitRef.current;
+    const copy = copyRef.current;
+    const location = locationRef.current;
+    if (!explorer || !control || !portrait || !copy || !location) return;
+
+    let frame = 0;
+    const measure = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const explorerRect = explorer.getBoundingClientRect();
+        const controlRect = control.getBoundingClientRect();
+        const portraitRect = portrait.getBoundingClientRect();
+        const copyRect = copy.getBoundingClientRect();
+        const locationRect = location.getBoundingClientRect();
+        const relativeLeft = (rect: DOMRect) => Math.round(rect.left - explorerRect.left);
+        const relativeCenterY = (rect: DOMRect) =>
+          Math.round(rect.top + rect.height / 2 - explorerRect.top);
+        const terminalGap = 22;
+        const startX = Math.round(controlRect.right - explorerRect.left);
+        const nearestTargetX = Math.min(
+          relativeLeft(portraitRect),
+          relativeLeft(copyRect),
+          relativeLeft(locationRect),
+        );
+        const availableGap = nearestTargetX - startX;
+        const trunkX = Math.round(startX + availableGap * 0.52);
+
+        setAboutConnector({
+          width: Math.round(explorerRect.width),
+          height: Math.ceil(Math.max(explorerRect.height, locationRect.bottom - explorerRect.top)),
+          startX,
+          startY: relativeCenterY(controlRect),
+          trunkX,
+          portraitX: relativeLeft(portraitRect) - terminalGap,
+          portraitY: relativeCenterY(portraitRect),
+          copyX: relativeLeft(copyRect) - terminalGap,
+          copyY: relativeCenterY(copyRect),
+          locationX: relativeLeft(locationRect) - terminalGap,
+          locationY: relativeCenterY(locationRect),
+        });
+      });
+    };
+
+    const resizeObserver = new ResizeObserver(measure);
+    [explorer, control, portrait, copy, location].forEach((element) => resizeObserver.observe(element));
+    window.addEventListener("resize", measure);
+    measure();
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [activePanel, controlsOffset]);
+
+  useLayoutEffect(() => {
+    if (activePanel !== "skills") return;
+
+    const explorer = explorerRef.current;
+    const control = skillsControlRef.current;
+    const panel = skillsPanelRef.current;
+    if (!explorer || !control || !panel) return;
+
+    const categories = skillGroups.map((group) =>
+      panel.querySelector<HTMLElement>(`[data-skill-category="${group.id}"]`),
+    );
+    const leafGroups = skillGroups.map((group) =>
+      Array.from(panel.querySelectorAll<HTMLElement>(`[data-skill-leaf="${group.id}"]`)),
+    );
+    if (categories.some((category) => !category) || leafGroups.some((leaves) => leaves.length === 0)) return;
+
+    let frame = 0;
+    const measure = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const explorerRect = explorer.getBoundingClientRect();
+        const controlRect = control.getBoundingClientRect();
+        const relativeLeft = (rect: DOMRect) => Math.round(rect.left - explorerRect.left);
+        const relativeRight = (rect: DOMRect) => Math.round(rect.right - explorerRect.left);
+        const relativeCenterY = (rect: DOMRect) =>
+          Math.round(rect.top + rect.height / 2 - explorerRect.top);
+        const labelGap = 14;
+        const terminalGap = 16;
+
+        const groups = skillGroups.map((_, index) => {
+          const categoryRect = categories[index]!.getBoundingClientRect();
+          const leafRects = leafGroups[index].map((leaf) => leaf.getBoundingClientRect());
+          const leaves = leafRects.map((rect) => ({
+            x: relativeLeft(rect) - terminalGap,
+            y: relativeCenterY(rect),
+          }));
+          const categoryStartX = relativeLeft(categoryRect) - labelGap;
+          const categoryEndX = relativeRight(categoryRect) + labelGap;
+          const nearestLeafX = Math.min(...leaves.map((leaf) => leaf.x));
+
+          return {
+            categoryStartX,
+            categoryEndX,
+            categoryY: relativeCenterY(categoryRect),
+            leafTrunkX: Math.round(categoryEndX + (nearestLeafX - categoryEndX) * 0.5),
+            leafTop: Math.min(...leaves.map((leaf) => leaf.y)),
+            leafBottom: Math.max(...leaves.map((leaf) => leaf.y)),
+            leaves,
+          };
+        });
+
+        const startX = Math.round(controlRect.right - explorerRect.left);
+        const nearestCategoryX = Math.min(...groups.map((group) => group.categoryStartX));
+        const trunkX = Math.round(startX + (nearestCategoryX - startX) * 0.5);
+        const bottommostLeaf = Math.max(...leafGroups.flat().map((leaf) => leaf.getBoundingClientRect().bottom));
+
+        setSkillsConnector({
+          width: Math.round(explorerRect.width),
+          height: Math.ceil(Math.max(explorerRect.height, bottommostLeaf - explorerRect.top)),
+          startX,
+          startY: relativeCenterY(controlRect),
+          trunkX,
+          groups,
+        });
+      });
+    };
+
+    const resizeObserver = new ResizeObserver(measure);
+    [explorer, control, panel, ...categories, ...leafGroups.flat()].forEach((element) => {
+      if (element) resizeObserver.observe(element);
+    });
+    window.addEventListener("resize", measure);
+    measure();
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [activePanel, controlsOffset]);
+
+  const connectorTop = aboutConnector
+    ? Math.min(aboutConnector.startY, aboutConnector.portraitY, aboutConnector.copyY, aboutConnector.locationY)
+    : 0;
+  const connectorBottom = aboutConnector
+    ? Math.max(aboutConnector.startY, aboutConnector.portraitY, aboutConnector.copyY, aboutConnector.locationY)
+    : 0;
+  const skillsConnectorTop = skillsConnector
+    ? Math.min(skillsConnector.startY, ...skillsConnector.groups.map((group) => group.categoryY))
+    : 0;
+  const skillsConnectorBottom = skillsConnector
+    ? Math.max(skillsConnector.startY, ...skillsConnector.groups.map((group) => group.categoryY))
+    : 0;
+
   return (
-    <div className="hero-explorer hero-reveal">
+    <div
+      ref={explorerRef}
+      className={`hero-explorer hero-reveal ${activePanel ? `is-${activePanel}-panel` : ""}`}
+      style={{ "--hero-controls-offset": `${controlsOffset}px` } as React.CSSProperties}
+    >
+      {aboutConnector ? (
+        <svg
+          className={`about-connector ${activePanel === "about" ? "is-visible" : ""}`}
+          viewBox={`0 0 ${aboutConnector.width} ${aboutConnector.height}`}
+          width={aboutConnector.width}
+          height={aboutConnector.height}
+          aria-hidden="true"
+        >
+          <path d={`M${aboutConnector.startX} ${aboutConnector.startY}H${aboutConnector.trunkX}`} />
+          <path d={`M${aboutConnector.trunkX} ${connectorTop}V${connectorBottom}`} />
+          <path d={`M${aboutConnector.trunkX} ${aboutConnector.portraitY}H${aboutConnector.portraitX}`} />
+          <path d={`M${aboutConnector.trunkX} ${aboutConnector.copyY}H${aboutConnector.copyX}`} />
+          <path d={`M${aboutConnector.trunkX} ${aboutConnector.locationY}H${aboutConnector.locationX}`} />
+        </svg>
+      ) : null}
+
+      {skillsConnector ? (
+        <svg
+          className={`skills-connector ${activePanel === "skills" ? "is-visible" : ""}`}
+          viewBox={`0 0 ${skillsConnector.width} ${skillsConnector.height}`}
+          width={skillsConnector.width}
+          height={skillsConnector.height}
+          aria-hidden="true"
+        >
+          <path d={`M${skillsConnector.startX} ${skillsConnector.startY}H${skillsConnector.trunkX}`} />
+          <path d={`M${skillsConnector.trunkX} ${skillsConnectorTop}V${skillsConnectorBottom}`} />
+          {skillsConnector.groups.map((group, groupIndex) => (
+            <g key={skillGroups[groupIndex].id}>
+              <path d={`M${skillsConnector.trunkX} ${group.categoryY}H${group.categoryStartX}`} />
+              <path d={`M${group.categoryEndX} ${group.categoryY}H${group.leafTrunkX}`} />
+              <path d={`M${group.leafTrunkX} ${group.leafTop}V${group.leafBottom}`} />
+              {group.leaves.map((leaf, leafIndex) => (
+                <path
+                  key={`${skillGroups[groupIndex].id}-${leafIndex}`}
+                  d={`M${group.leafTrunkX} ${leaf.y}H${leaf.x}`}
+                />
+              ))}
+            </g>
+          ))}
+        </svg>
+      ) : null}
+
       <div className="hero-controls" aria-label="Portfolio information">
         {heroPanelLabels.map((panel) => (
           <button
             key={panel.id}
+            ref={
+              panel.id === "about"
+                ? aboutControlRef
+                : panel.id === "skills"
+                  ? skillsControlRef
+                  : undefined
+            }
             type="button"
             className={`hero-control ${activePanel === panel.id ? "is-active" : ""}`}
             aria-expanded={activePanel === panel.id}
@@ -154,14 +444,14 @@ function HeroExplorer({
           aria-hidden={activePanel !== "about"}
         >
           <div className="about-profile">
-            <div className="about-tree-portrait">
+            <div ref={portraitRef} className="about-tree-portrait">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/assets/portfolio-pic-color.png" alt={`${siteContent.name} portrait`} />
             </div>
-            <div className="about-tree-copy">
+            <div ref={copyRef} className="about-tree-copy">
               <p>{siteContent.introduction}</p>
             </div>
-            <div className="about-tree-location">
+            <div ref={locationRef} className="about-tree-location">
               <span>CURRENTLY RESIDING IN</span>
               <strong>{siteContent.location}</strong>
             </div>
@@ -169,61 +459,35 @@ function HeroExplorer({
         </div>
 
         <div
-          ref={skillsTreeRef}
+          ref={skillsPanelRef}
           id="hero-panel-skills"
-          className="hero-tree hero-tree-skills"
+          className={`hero-tree hero-tree-skills ${activePanel === "skills" ? "is-active" : ""}`}
           aria-hidden={activePanel !== "skills"}
         >
-          <svg className="hero-tree-lines" viewBox="0 0 900 300" preserveAspectRatio="none" aria-hidden="true">
-            <path data-tree-level="0" pathLength="1" d="M0 99H100" />
-            <path data-tree-level="0" pathLength="1" d="M100 36V230" />
-
-            <path data-tree-level="1" pathLength="1" d="M100 36H245" />
-            <path data-tree-level="1" pathLength="1" d="M100 130H245" />
-            <path data-tree-level="1" pathLength="1" d="M100 230H245" />
-
-            <path data-tree-level="2" pathLength="1" d="M405 36H535V18H675" />
-            <path data-tree-level="2" pathLength="1" d="M535 36H675" />
-            <path data-tree-level="2" pathLength="1" d="M535 36V68H675" />
-
-            <path data-tree-level="2" pathLength="1" d="M405 130H535V106H675" />
-            <path data-tree-level="2" pathLength="1" d="M535 130H675" />
-            <path data-tree-level="2" pathLength="1" d="M535 130V154H675" />
-
-            <path data-tree-level="2" pathLength="1" d="M405 230H535V206H675" />
-            <path data-tree-level="2" pathLength="1" d="M535 230H675" />
-            <path data-tree-level="2" pathLength="1" d="M535 230V254H675" />
-          </svg>
-
-          <span className="tree-node tree-node-category tree-category-languages">[ LANGUAGES ]</span>
-          <span className="tree-node tree-node-category tree-category-systems">[ DATA + APIS ]</span>
-          <span className="tree-node tree-node-category tree-category-workflow">[ WORKFLOW ]</span>
-
-          <span className="tree-node tree-node-leaf tree-leaf-python">PYTHON</span>
-          <span className="tree-node tree-node-leaf tree-leaf-javascript">JAVASCRIPT</span>
-          <span className="tree-node tree-node-leaf tree-leaf-sql">SQL</span>
-
-          <span className="tree-node tree-node-leaf tree-leaf-databases">RELATIONAL DATABASES</span>
-          <span className="tree-node tree-node-leaf tree-leaf-apis">REST APIS</span>
-          <span className="tree-node tree-node-leaf tree-leaf-extraction">STRUCTURED DATA EXTRACTION</span>
-
-          <span className="tree-node tree-node-leaf tree-leaf-git">GIT</span>
-          <span className="tree-node tree-node-leaf tree-leaf-terminal">TERMINAL</span>
-          <span className="tree-node tree-node-leaf tree-leaf-ai">AI-ASSISTED DEVELOPMENT</span>
+          <div className="skills-taxonomy">
+            {skillGroups.map((group) => (
+              <div className="skills-taxonomy-group" key={group.id}>
+                <span className="skills-category-label" data-skill-category={group.id}>
+                  [ {group.label} ]
+                </span>
+                <div className="skills-leaves">
+                  {group.skills.map((skill) => (
+                    <span className="skills-leaf-label" data-skill-leaf={group.id} key={skill}>
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
 
           <div className="skills-mobile-list">
-            <div className="skills-mobile-group">
-              <strong>LANGUAGES</strong>
-              <span>Python / JavaScript / SQL</span>
-            </div>
-            <div className="skills-mobile-group">
-              <strong>DATA + APIS</strong>
-              <span>Relational databases / REST APIs / Structured data extraction</span>
-            </div>
-            <div className="skills-mobile-group">
-              <strong>WORKFLOW</strong>
-              <span>Git / Terminal / AI-assisted development</span>
-            </div>
+            {skillGroups.map((group) => (
+              <div className="skills-mobile-group" key={group.id}>
+                <strong>{group.label}</strong>
+                <span>{group.skills.join(" / ")}</span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -260,8 +524,6 @@ export default function Portfolio() {
   const root = useRef<HTMLDivElement>(null);
   const overlay = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
-  const skillsTree = useRef<HTMLDivElement>(null);
-  const skillsTimeline = useRef<gsap.core.Timeline | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isClosing, setIsClosing] = useState(false);
   const [activeHeroPanel, setActiveHeroPanel] = useState<HeroPanel | null>(null);
@@ -308,8 +570,6 @@ export default function Portfolio() {
     const deepLinkTimer = window.setTimeout(() => setSelectedProject(linkedProject), 0);
     return () => window.clearTimeout(deepLinkTimer);
   }, []);
-
-  useEffect(() => () => skillsTimeline.current?.kill(), []);
 
   useLayoutEffect(() => {
     let introSafetyTimer: number | undefined;
@@ -362,14 +622,14 @@ export default function Portfolio() {
 
       introTimeline
         .set(".intro", { autoAlpha: 1 })
-        .from(".intro-kicker, .intro-count", {
+        .from(".intro-grid-master .intro-kicker, .intro-grid-master .intro-count", {
           y: 18,
           autoAlpha: 0,
           duration: 0.45,
           stagger: 0.08,
         })
         .from(
-          ".intro-word > span",
+          ".intro-grid-master .intro-word > span",
           {
             yPercent: 120,
             rotate: 2,
@@ -379,29 +639,28 @@ export default function Portfolio() {
           },
           "-=0.18",
         )
-        .from(".intro-foot span", { y: 12, autoAlpha: 0, duration: 0.4, stagger: 0.08 }, "-=0.3")
+        .from(
+          ".intro-grid-master .intro-foot span",
+          { y: 12, autoAlpha: 0, duration: 0.4, stagger: 0.08 },
+          "-=0.3",
+        )
         .fromTo(
-          ".intro-accent",
+          ".intro-grid-master .intro-accent",
           { scaleX: 0, transformOrigin: "left center" },
           { scaleX: 1, duration: 0.5, ease: "expo.inOut" },
           "-=0.25",
         )
-        .to(
-          ".intro-word > span",
-          { yPercent: -125, duration: 0.55, stagger: 0.05, ease: "expo.in" },
-          "+=0.3",
-        )
-        .to(".intro-grid", { autoAlpha: 0, duration: 0.22 }, "-=0.15")
+        .set(".intro-panel-content", { autoAlpha: 1 }, "+=0.3")
+        .set(".intro-grid-master", { autoAlpha: 0 }, "<")
         .to(
           ".intro-panel",
           {
-            scaleY: 0,
-            transformOrigin: "top center",
+            yPercent: -100,
             duration: 0.95,
             stagger: 0.07,
             ease: "expo.inOut",
           },
-          "-=0.02",
+          "<",
         )
         .from(
           ".header-reveal",
@@ -537,133 +796,9 @@ export default function Portfolio() {
     setSelectedProject(project);
   };
 
-  const animateSkillsTree = (opening: boolean, onComplete?: () => void) => {
-    const tree = skillsTree.current;
-    if (!tree) {
-      onComplete?.();
-      return;
-    }
-
-    skillsTimeline.current?.kill();
-
-    const levelZero = tree.querySelectorAll<SVGPathElement>('[data-tree-level="0"]');
-    const levelOne = tree.querySelectorAll<SVGPathElement>('[data-tree-level="1"]');
-    const levelTwo = tree.querySelectorAll<SVGPathElement>('[data-tree-level="2"]');
-    const paths = tree.querySelectorAll<SVGPathElement>("[data-tree-level]");
-    const categories = tree.querySelectorAll<HTMLElement>(".tree-node-category");
-    const leaves = tree.querySelectorAll<HTMLElement>(".tree-node-leaf");
-    const mobileGroups = tree.querySelectorAll<HTMLElement>(".skills-mobile-group");
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const compactLayout = window.matchMedia("(max-width: 840px)").matches;
-
-    if (reduceMotion) {
-      gsap.set(tree, { autoAlpha: opening ? 1 : 0 });
-      gsap.set(paths, { strokeDasharray: 1, strokeDashoffset: opening ? 0 : 1 });
-      gsap.set([...categories, ...leaves, ...mobileGroups], {
-        autoAlpha: opening ? 1 : 0,
-        y: 0,
-      });
-      onComplete?.();
-      return;
-    }
-
-    if (compactLayout) {
-      if (opening) {
-        gsap.set(tree, { autoAlpha: 1 });
-        gsap.set(mobileGroups, { autoAlpha: 0, y: 8 });
-        skillsTimeline.current = gsap.timeline({ onComplete }).to(mobileGroups, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.38,
-          stagger: 0.1,
-          ease: "power3.out",
-        });
-        return;
-      }
-
-      skillsTimeline.current = gsap
-        .timeline({ onComplete })
-        .to(mobileGroups, {
-          autoAlpha: 0,
-          y: -6,
-          duration: 0.22,
-          stagger: { each: 0.05, from: "end" },
-          ease: "power2.in",
-        })
-        .set(tree, { autoAlpha: 0 });
-      return;
-    }
-
-    if (opening) {
-      gsap.set(tree, { autoAlpha: 1 });
-      gsap.set(paths, { strokeDasharray: 1, strokeDashoffset: 1 });
-      gsap.set([...categories, ...leaves], { autoAlpha: 0, y: 8 });
-
-      skillsTimeline.current = gsap
-        .timeline({ onComplete })
-        .to(levelZero, {
-          strokeDashoffset: 0,
-          duration: 0.34,
-          stagger: 0.07,
-          ease: "power2.inOut",
-        })
-        .to(levelOne, {
-          strokeDashoffset: 0,
-          duration: 0.38,
-          stagger: 0.07,
-          ease: "power2.inOut",
-        }, "-=0.08")
-        .to(categories, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.3,
-          stagger: 0.08,
-          ease: "power3.out",
-        }, "-=0.24")
-        .to(levelTwo, {
-          strokeDashoffset: 0,
-          duration: 0.48,
-          stagger: 0.055,
-          ease: "power2.inOut",
-        }, "-=0.12")
-        .to(leaves, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.28,
-          stagger: 0.045,
-          ease: "power3.out",
-        }, "-=0.34");
-      return;
-    }
-
-    skillsTimeline.current = gsap
-      .timeline({ onComplete })
-      .to([...leaves, ...categories], {
-        autoAlpha: 0,
-        y: -6,
-        duration: 0.2,
-        stagger: { each: 0.025, from: "end" },
-        ease: "power2.in",
-      })
-      .to(paths, {
-        strokeDashoffset: 1,
-        duration: 0.4,
-        stagger: { each: 0.025, from: "end" },
-        ease: "power2.inOut",
-      }, "-=0.08")
-      .set(tree, { autoAlpha: 0 });
-  };
-
   const selectHeroPanel = (panel: HeroPanel) => {
     const nextPanel = activeHeroPanel === panel ? null : panel;
-
-    if (activeHeroPanel === "skills" && nextPanel !== "skills") {
-      animateSkillsTree(false, () => setActiveHeroPanel(nextPanel));
-      return;
-    }
-
     setActiveHeroPanel(nextPanel);
-    if (nextPanel === "skills") animateSkillsTree(true);
   };
 
   return (
@@ -704,7 +839,6 @@ export default function Portfolio() {
             <HeroExplorer
               activePanel={activeHeroPanel}
               onSelect={selectHeroPanel}
-              skillsTreeRef={skillsTree}
             />
 
             <a className="scroll-cue hero-reveal" href="#work">

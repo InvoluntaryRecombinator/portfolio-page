@@ -134,14 +134,29 @@ a:focus-visible {
 
 .intro-panels {
   position: absolute;
+  z-index: 1;
   inset: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 }
 
 .intro-panel {
-  display: block;
+  position: relative;
+  overflow: hidden;
   background: #11110f;
+}
+
+.intro-panel-content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--intro-column) * -100%);
+  width: 400%;
+  visibility: hidden;
+}
+
+.intro-panel-content .intro-grid {
+  width: 100%;
 }
 
 .intro-grid {
@@ -365,6 +380,7 @@ a:focus-visible {
 }
 
 .hero-explorer {
+  position: relative;
   display: grid;
   grid-column: 1 / 13;
   grid-row: 3;
@@ -376,10 +392,13 @@ a:focus-visible {
 }
 
 .hero-controls {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-column: 1 / 5;
   grid-template-rows: repeat(3, 58px);
   gap: 28px;
+  margin-top: var(--hero-controls-offset, 0px);
 }
 
 .hero-control {
@@ -413,8 +432,37 @@ a:focus-visible {
 
 .hero-diagram {
   position: relative;
+  z-index: 2;
   grid-column: 5 / 13;
   min-height: 350px;
+}
+
+.about-connector,
+.skills-connector {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.about-connector.is-visible,
+.skills-connector.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.about-connector path,
+.skills-connector path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
 }
 
 .hero-tree {
@@ -447,7 +495,8 @@ a:focus-visible {
   vector-effect: non-scaling-stroke;
 }
 
-.tree-node,
+.skills-category-label,
+.skills-leaf-label,
 .about-tree-location,
 .working-node {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -455,28 +504,54 @@ a:focus-visible {
   text-transform: uppercase;
 }
 
-.tree-node {
+.hero-explorer.is-skills-panel {
+  min-height: 460px;
+}
+
+.skills-taxonomy {
   position: absolute;
-  font-size: clamp(9px, 0.82vw, 12px);
+  top: -30px;
+  right: 0;
+  left: 12%;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
+  height: 450px;
+}
+
+.skills-taxonomy-group {
+  display: grid;
+  grid-template-columns: minmax(175px, 44%) minmax(0, 1fr);
+  gap: clamp(50px, 6vw, 84px);
+  align-items: center;
+  min-width: 0;
+}
+
+.skills-category-label,
+.skills-leaf-label {
+  position: relative;
+  z-index: 2;
+  width: max-content;
+  max-width: 100%;
+  background: var(--paper);
   white-space: nowrap;
 }
 
-.tree-node-category {
-  font-size: clamp(10px, 0.92vw, 13px);
+.skills-category-label {
+  justify-self: start;
+  font-size: clamp(11px, 0.82vw, 13px);
 }
 
-.tree-category-languages { top: 7%; left: 27%; }
-.tree-category-systems { top: 38.5%; left: 27%; }
-.tree-category-workflow { top: 72%; left: 27%; }
-.tree-leaf-python { top: 2%; left: 75%; }
-.tree-leaf-javascript { top: 10%; left: 75%; }
-.tree-leaf-sql { top: 18%; left: 75%; }
-.tree-leaf-databases { top: 31%; left: 75%; }
-.tree-leaf-apis { top: 39%; left: 75%; }
-.tree-leaf-extraction { top: 47%; left: 75%; }
-.tree-leaf-git { top: 64.5%; left: 75%; }
-.tree-leaf-terminal { top: 72.5%; left: 75%; }
-.tree-leaf-ai { top: 80.5%; left: 75%; }
+.skills-leaves {
+  display: grid;
+  gap: 7px;
+  align-content: center;
+  min-width: 0;
+}
+
+.skills-leaf-label {
+  font-size: clamp(10px, 0.75vw, 12px);
+}
 
 .skills-mobile-list {
   display: none;
@@ -505,17 +580,21 @@ a:focus-visible {
 
 .about-tree-copy {
   position: relative;
-  width: 100%;
+  width: calc(100% + 40px);
   margin-top: -48px;
+  margin-left: -40px;
   padding-top: 12px;
   border-top: 1px solid var(--hairline);
 }
 
 .about-tree-location {
   position: relative;
+  width: calc(100% + 40px);
   margin-top: 18px;
+  margin-left: -40px;
   padding-top: 12px;
   border-top: 1px solid var(--hairline);
+  text-align: center;
   font-size: 11px;
 }
 
@@ -1531,10 +1610,15 @@ a:focus-visible {
     margin-top: 45px;
   }
 
+  .hero-explorer.is-skills-panel {
+    min-height: 0;
+  }
+
   .hero-controls {
     display: grid;
     grid-template-rows: none;
     gap: 10px;
+    margin-top: 0;
   }
 
   .hero-control {
@@ -1557,7 +1641,13 @@ a:focus-visible {
   }
 
   .hero-tree-lines,
+  .about-connector,
+  .skills-connector,
   .tree-node {
+    display: none;
+  }
+
+  .skills-taxonomy {
     display: none;
   }
 
@@ -1605,6 +1695,12 @@ a:focus-visible {
   .about-tree-copy {
     width: 100%;
     margin-top: -40px;
+    margin-left: 0;
+  }
+
+  .about-tree-location {
+    width: 100%;
+    margin-left: 0;
   }
 
   .working-node {
