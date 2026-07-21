@@ -407,7 +407,7 @@ function HeroExplorer({
 
         const startX = Math.round(controlRect.right - explorerRect.left);
         const nearestCategoryX = Math.min(...groups.map((group) => group.categoryStartX));
-        const trunkX = Math.round(startX + (nearestCategoryX - startX) * 0.92);
+        const trunkX = Math.round(startX + (nearestCategoryX - startX) * 0.65);
         const bottommostLeaf = Math.max(...leafGroups.flat().map((leaf) => leaf.getBoundingClientRect().bottom));
 
         setSkillsConnector({
