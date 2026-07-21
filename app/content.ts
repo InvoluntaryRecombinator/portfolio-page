@@ -19,9 +19,9 @@ export const siteContent = {
   role: "DESIGNER + DEVELOPER",
   location: "YOUR LOCATION",
   availability: "AVAILABLE FOR SELECTED WORK",
-  statement: "PUT YOUR SHARPEST IDEA HERE.",
+  statement: "BUILDING TECHNICAL SYSTEMS THAT WORK.",
   introduction:
-    "A concise statement about what you make, how you think, and why the work matters.",
+    "I am a developer focused on building reliable web applications and structured data parsing systems. I prioritize clean database integrations and predictable execution over unnecessary complexity. Away from the keyboard, I am usually bouldering, snowboarding, or open-water diving.",
   email: "EMAIL@EXAMPLE.COM",
 };
 
@@ -34,9 +34,9 @@ export const projects: Project[] = [
     summary:
       "Replace this with a concise explanation of GRVL—what it is, what you made, and why the work matters.",
     visual: "image",
-    image: "/projects/grvl/paper-logo-dark.png",
-    background: "#11110f",
-    foreground: "#f1f0e9",
+    image: "/assets/projects/grvl/paper-logo-dark.png",
+    background: "#f0eee7",
+    foreground: "#151512",
     accent: "#b8ff30",
     overview:
       "Use this space for the complete GRVL overview. Two or three focused paragraphs can explain the idea, the problem, and the finished experience without turning the case study into a wall of text.",
@@ -46,7 +46,8 @@ export const projects: Project[] = [
     number: "02",
     title: "FLEETSYNC",
     year: "YEAR",
-    summary: "",
+    summary:
+      "Replace this with a concise explanation of FleetSync—what it does, what you designed, and why it matters.",
     visual: "fleetsync",
     background: "#000000",
     foreground: "#ffffff",

@@ -5,8 +5,8 @@ export const metadata: Metadata = {
   title: "Your Name — Selected Work",
   description: "A portfolio concept for selected design and development work.",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: "/assets/favicon.svg",
+    shortcut: "/assets/favicon.svg",
   },
 };
 

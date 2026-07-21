@@ -644,7 +644,7 @@ For each item, replace the text inside the **Replacement** block.
 
 **Current file:**
 
-> `/public/projects/grvl/paper-logo-dark.png`
+> `/public/assets/projects/grvl/paper-logo-dark.png`
 
 **Replacement:**
 

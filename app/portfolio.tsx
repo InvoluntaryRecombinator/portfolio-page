@@ -35,7 +35,6 @@ function ProjectArtwork({ project, large = false }: { project: Project; large?: 
         {/* The source artwork is already export-sized and must preserve its transparency. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={project.image} alt="GRVL project logo" />
-        <span className="artwork-coordinate">ASSET / 001</span>
       </div>
     );
   }
@@ -65,7 +64,6 @@ function ProjectArtwork({ project, large = false }: { project: Project; large?: 
         <div className="grid-disc" />
         <div className="grid-block grid-block-a" />
         <div className="grid-block grid-block-b" />
-        <span className="grid-label">IMAGE / MARK / OBJECT</span>
       </div>
     );
   }
@@ -78,7 +76,6 @@ function ProjectArtwork({ project, large = false }: { project: Project; large?: 
         <circle cx="400" cy="300" r="63" />
         <circle className="orbit-dot" cx="704" cy="278" r="18" />
       </svg>
-      <span className="orbit-label">A FLEXIBLE PLACE FOR YOUR ARTWORK</span>
     </div>
   );
 }
@@ -109,12 +106,165 @@ function Intro() {
   );
 }
 
+type HeroPanel = "about" | "skills" | "working";
+
+const heroPanelLabels: Array<{ id: HeroPanel; label: string }> = [
+  { id: "about", label: "about me" },
+  { id: "skills", label: "technical skills" },
+  { id: "working", label: "working style" },
+];
+
+function HeroExplorer({
+  activePanel,
+  onSelect,
+  skillsTreeRef,
+}: {
+  activePanel: HeroPanel | null;
+  onSelect: (panel: HeroPanel) => void;
+  skillsTreeRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  return (
+    <div className="hero-explorer hero-reveal">
+      <div className="hero-controls" aria-label="Portfolio information">
+        {heroPanelLabels.map((panel) => (
+          <button
+            key={panel.id}
+            type="button"
+            className={`hero-control ${activePanel === panel.id ? "is-active" : ""}`}
+            aria-expanded={activePanel === panel.id}
+            aria-controls={`hero-panel-${panel.id}`}
+            onClick={() => onSelect(panel.id)}
+          >
+            <span className="hero-control-symbol" aria-hidden="true">
+              {activePanel === panel.id ? "−" : "+"}
+            </span>
+            <span>[ {panel.label} ]</span>
+          </button>
+        ))}
+      </div>
+
+      <div
+        className={`hero-diagram ${activePanel ? "has-active-panel" : ""} ${
+          activePanel ? `is-${activePanel}-panel` : ""
+        }`}
+      >
+        <div
+          id="hero-panel-about"
+          className={`hero-tree hero-tree-about ${activePanel === "about" ? "is-active" : ""}`}
+          aria-hidden={activePanel !== "about"}
+        >
+          <div className="about-profile">
+            <div className="about-tree-portrait">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/assets/portfolio-pic-color.png" alt={`${siteContent.name} portrait`} />
+            </div>
+            <div className="about-tree-copy">
+              <p>{siteContent.introduction}</p>
+            </div>
+            <div className="about-tree-location">
+              <span>CURRENTLY RESIDING IN</span>
+              <strong>{siteContent.location}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div
+          ref={skillsTreeRef}
+          id="hero-panel-skills"
+          className="hero-tree hero-tree-skills"
+          aria-hidden={activePanel !== "skills"}
+        >
+          <svg className="hero-tree-lines" viewBox="0 0 900 300" preserveAspectRatio="none" aria-hidden="true">
+            <path data-tree-level="0" pathLength="1" d="M0 99H100" />
+            <path data-tree-level="0" pathLength="1" d="M100 36V230" />
+
+            <path data-tree-level="1" pathLength="1" d="M100 36H245" />
+            <path data-tree-level="1" pathLength="1" d="M100 130H245" />
+            <path data-tree-level="1" pathLength="1" d="M100 230H245" />
+
+            <path data-tree-level="2" pathLength="1" d="M405 36H535V18H675" />
+            <path data-tree-level="2" pathLength="1" d="M535 36H675" />
+            <path data-tree-level="2" pathLength="1" d="M535 36V68H675" />
+
+            <path data-tree-level="2" pathLength="1" d="M405 130H535V106H675" />
+            <path data-tree-level="2" pathLength="1" d="M535 130H675" />
+            <path data-tree-level="2" pathLength="1" d="M535 130V154H675" />
+
+            <path data-tree-level="2" pathLength="1" d="M405 230H535V206H675" />
+            <path data-tree-level="2" pathLength="1" d="M535 230H675" />
+            <path data-tree-level="2" pathLength="1" d="M535 230V254H675" />
+          </svg>
+
+          <span className="tree-node tree-node-category tree-category-languages">[ LANGUAGES ]</span>
+          <span className="tree-node tree-node-category tree-category-systems">[ DATA + APIS ]</span>
+          <span className="tree-node tree-node-category tree-category-workflow">[ WORKFLOW ]</span>
+
+          <span className="tree-node tree-node-leaf tree-leaf-python">PYTHON</span>
+          <span className="tree-node tree-node-leaf tree-leaf-javascript">JAVASCRIPT</span>
+          <span className="tree-node tree-node-leaf tree-leaf-sql">SQL</span>
+
+          <span className="tree-node tree-node-leaf tree-leaf-databases">RELATIONAL DATABASES</span>
+          <span className="tree-node tree-node-leaf tree-leaf-apis">REST APIS</span>
+          <span className="tree-node tree-node-leaf tree-leaf-extraction">STRUCTURED DATA EXTRACTION</span>
+
+          <span className="tree-node tree-node-leaf tree-leaf-git">GIT</span>
+          <span className="tree-node tree-node-leaf tree-leaf-terminal">TERMINAL</span>
+          <span className="tree-node tree-node-leaf tree-leaf-ai">AI-ASSISTED DEVELOPMENT</span>
+
+          <div className="skills-mobile-list">
+            <div className="skills-mobile-group">
+              <strong>LANGUAGES</strong>
+              <span>Python / JavaScript / SQL</span>
+            </div>
+            <div className="skills-mobile-group">
+              <strong>DATA + APIS</strong>
+              <span>Relational databases / REST APIs / Structured data extraction</span>
+            </div>
+            <div className="skills-mobile-group">
+              <strong>WORKFLOW</strong>
+              <span>Git / Terminal / AI-assisted development</span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="hero-panel-working"
+          className={`hero-tree hero-tree-working ${activePanel === "working" ? "is-active" : ""}`}
+          aria-hidden={activePanel !== "working"}
+        >
+          <svg className="hero-tree-lines" viewBox="0 0 900 300" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 172H115V62" />
+            <path d="M115 62H330" />
+            <path d="M115 150H430" />
+            <path d="M115 238H360" />
+          </svg>
+          <div className="working-node working-node-requirements">
+            <span>01</span>
+            <strong>CLEAR REQUIREMENTS</strong>
+          </div>
+          <div className="working-node working-node-execution">
+            <span>02</span>
+            <strong>INDEPENDENT EXECUTION</strong>
+          </div>
+          <div className="working-node working-node-delivery">
+            <span>03</span>
+            <strong>RELIABLE DELIVERY</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Portfolio() {
   const root = useRef<HTMLDivElement>(null);
   const overlay = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
+  const skillsTree = useRef<HTMLDivElement>(null);
+  const skillsTimeline = useRef<gsap.core.Timeline | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const [activeHeroPanel, setActiveHeroPanel] = useState<HeroPanel | null>(null);
 
   const closeProject = useCallback(() => {
     if (!overlay.current || isClosing) return;
@@ -159,20 +309,40 @@ export default function Portfolio() {
     return () => window.clearTimeout(deepLinkTimer);
   }, []);
 
+  useEffect(() => () => skillsTimeline.current?.kill(), []);
+
   useLayoutEffect(() => {
     let introSafetyTimer: number | undefined;
+    let workHeading: HTMLElement | null = null;
 
     const finishIntro = () => {
       document.body.classList.remove("intro-running");
       gsap.set(".intro", { display: "none" });
-      gsap.set(".site-rule, .header-reveal, .hero-line > span, .hero-reveal", {
-        clearProps: "opacity,visibility,transform",
+      gsap.set(".header-reveal, .hero-statement, .hero-reveal", {
+        clearProps: "opacity,visibility,transform,filter,--hero-bloom-position",
       });
       ScrollTrigger.refresh();
     };
 
     const context = gsap.context(() => {
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      workHeading = document.querySelector<HTMLElement>(".work-heading");
+      if (workHeading) {
+        const setWorkHeadingFilled = (filled: boolean) => {
+          workHeading?.classList.toggle("is-chroma-filled", filled);
+        };
+
+        ScrollTrigger.create({
+          trigger: workHeading,
+          start: "center center",
+          end: "max",
+          onEnter: () => setWorkHeadingFilled(true),
+          onEnterBack: () => setWorkHeadingFilled(true),
+          onLeaveBack: () => setWorkHeadingFilled(false),
+          onRefresh: (self) => setWorkHeadingFilled(self.scroll() >= self.start),
+        });
+      }
 
       if (reduceMotion) {
         finishIntro();
@@ -234,19 +404,25 @@ export default function Portfolio() {
           "-=0.02",
         )
         .from(
-          ".site-rule",
-          { scaleX: 0, transformOrigin: "left center", duration: 0.75, stagger: 0.05 },
-          "-=0.65",
-        )
-        .from(
           ".header-reveal",
           { y: 16, autoAlpha: 0, duration: 0.55, stagger: 0.06 },
           "-=0.64",
         )
-        .from(
-          ".hero-line > span",
-          { yPercent: 115, duration: 0.85, stagger: 0.08, ease: "expo.out" },
-          "-=0.52",
+        .fromTo(
+          ".hero-statement",
+          {
+            "--hero-bloom-position": "100%",
+            autoAlpha: 0.7,
+            filter: "blur(6px)",
+          },
+          {
+            "--hero-bloom-position": "0%",
+            autoAlpha: 1,
+            filter: "blur(0px)",
+            duration: 1.8,
+            ease: "power2.inOut",
+          },
+          "-=0.62",
         )
         .from(
           ".hero-reveal",
@@ -260,18 +436,6 @@ export default function Portfolio() {
         ease: "power2.inOut",
         repeat: -1,
         yoyo: true,
-      });
-
-      gsap.to(".hero-statement", {
-        yPercent: -9,
-        opacity: 0.58,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".hero",
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
       });
 
       gsap.utils.toArray<HTMLElement>(".project-row").forEach((row) => {
@@ -306,6 +470,7 @@ export default function Portfolio() {
     return () => {
       if (introSafetyTimer) window.clearTimeout(introSafetyTimer);
       document.body.classList.remove("intro-running");
+      workHeading?.classList.remove("is-chroma-filled");
       context.revert();
     };
   }, []);
@@ -372,18 +537,133 @@ export default function Portfolio() {
     setSelectedProject(project);
   };
 
-  const animateEmail = (target: HTMLAnchorElement, entering: boolean) => {
-    gsap.to(target.querySelector(".email-roll-track"), {
-      yPercent: entering ? -50 : 0,
-      duration: 0.65,
-      ease: "expo.out",
-    });
-    gsap.to(target.querySelector(".footer-email-arrow"), {
-      x: entering ? 8 : 0,
-      y: entering ? -8 : 0,
-      duration: 0.65,
-      ease: "expo.out",
-    });
+  const animateSkillsTree = (opening: boolean, onComplete?: () => void) => {
+    const tree = skillsTree.current;
+    if (!tree) {
+      onComplete?.();
+      return;
+    }
+
+    skillsTimeline.current?.kill();
+
+    const levelZero = tree.querySelectorAll<SVGPathElement>('[data-tree-level="0"]');
+    const levelOne = tree.querySelectorAll<SVGPathElement>('[data-tree-level="1"]');
+    const levelTwo = tree.querySelectorAll<SVGPathElement>('[data-tree-level="2"]');
+    const paths = tree.querySelectorAll<SVGPathElement>("[data-tree-level]");
+    const categories = tree.querySelectorAll<HTMLElement>(".tree-node-category");
+    const leaves = tree.querySelectorAll<HTMLElement>(".tree-node-leaf");
+    const mobileGroups = tree.querySelectorAll<HTMLElement>(".skills-mobile-group");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const compactLayout = window.matchMedia("(max-width: 840px)").matches;
+
+    if (reduceMotion) {
+      gsap.set(tree, { autoAlpha: opening ? 1 : 0 });
+      gsap.set(paths, { strokeDasharray: 1, strokeDashoffset: opening ? 0 : 1 });
+      gsap.set([...categories, ...leaves, ...mobileGroups], {
+        autoAlpha: opening ? 1 : 0,
+        y: 0,
+      });
+      onComplete?.();
+      return;
+    }
+
+    if (compactLayout) {
+      if (opening) {
+        gsap.set(tree, { autoAlpha: 1 });
+        gsap.set(mobileGroups, { autoAlpha: 0, y: 8 });
+        skillsTimeline.current = gsap.timeline({ onComplete }).to(mobileGroups, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.38,
+          stagger: 0.1,
+          ease: "power3.out",
+        });
+        return;
+      }
+
+      skillsTimeline.current = gsap
+        .timeline({ onComplete })
+        .to(mobileGroups, {
+          autoAlpha: 0,
+          y: -6,
+          duration: 0.22,
+          stagger: { each: 0.05, from: "end" },
+          ease: "power2.in",
+        })
+        .set(tree, { autoAlpha: 0 });
+      return;
+    }
+
+    if (opening) {
+      gsap.set(tree, { autoAlpha: 1 });
+      gsap.set(paths, { strokeDasharray: 1, strokeDashoffset: 1 });
+      gsap.set([...categories, ...leaves], { autoAlpha: 0, y: 8 });
+
+      skillsTimeline.current = gsap
+        .timeline({ onComplete })
+        .to(levelZero, {
+          strokeDashoffset: 0,
+          duration: 0.34,
+          stagger: 0.07,
+          ease: "power2.inOut",
+        })
+        .to(levelOne, {
+          strokeDashoffset: 0,
+          duration: 0.38,
+          stagger: 0.07,
+          ease: "power2.inOut",
+        }, "-=0.08")
+        .to(categories, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.3,
+          stagger: 0.08,
+          ease: "power3.out",
+        }, "-=0.24")
+        .to(levelTwo, {
+          strokeDashoffset: 0,
+          duration: 0.48,
+          stagger: 0.055,
+          ease: "power2.inOut",
+        }, "-=0.12")
+        .to(leaves, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.28,
+          stagger: 0.045,
+          ease: "power3.out",
+        }, "-=0.34");
+      return;
+    }
+
+    skillsTimeline.current = gsap
+      .timeline({ onComplete })
+      .to([...leaves, ...categories], {
+        autoAlpha: 0,
+        y: -6,
+        duration: 0.2,
+        stagger: { each: 0.025, from: "end" },
+        ease: "power2.in",
+      })
+      .to(paths, {
+        strokeDashoffset: 1,
+        duration: 0.4,
+        stagger: { each: 0.025, from: "end" },
+        ease: "power2.inOut",
+      }, "-=0.08")
+      .set(tree, { autoAlpha: 0 });
+  };
+
+  const selectHeroPanel = (panel: HeroPanel) => {
+    const nextPanel = activeHeroPanel === panel ? null : panel;
+
+    if (activeHeroPanel === "skills" && nextPanel !== "skills") {
+      animateSkillsTree(false, () => setActiveHeroPanel(nextPanel));
+      return;
+    }
+
+    setActiveHeroPanel(nextPanel);
+    if (nextPanel === "skills") animateSkillsTree(true);
   };
 
   return (
@@ -391,93 +671,86 @@ export default function Portfolio() {
       <Intro />
 
       <header className="site-header">
-        <a className="site-name header-reveal" href="#top" aria-label="Back to top">
-          {siteContent.name}
-        </a>
-        <div className="header-status header-reveal">
-          {siteContent.role}
+        <div className="site-identity header-reveal">
+          <span className="availability-status">
+            <span className="availability-dot" aria-hidden="true" />
+            {siteContent.availability}
+          </span>
+          <a className="site-name" href="#top" aria-label="Back to top">
+            {siteContent.name}
+          </a>
         </div>
         <nav className="site-nav header-reveal" aria-label="Primary navigation">
-          <a href="#work">WORK</a>
-          <a href="#contact">CONTACT</a>
-          <a href="#contact">LINKEDIN ↗</a>
+          <a href="#work">PROJECTS <Arrow diagonal /></a>
+          <a href="#contact">CONTACT <Arrow diagonal /></a>
+          <a href="#contact">LINKEDIN <Arrow diagonal /></a>
+          <a href="#contact">GITHUB <Arrow diagonal /></a>
+          <a href="#contact">RÉSUMÉ <Arrow diagonal /></a>
         </nav>
-        <span className="site-rule" />
       </header>
 
       <main id="top">
         <section className="hero" aria-labelledby="hero-title">
           <div className="hero-grid">
             <div className="hero-index hero-reveal">
-              <span>PORTFOLIO</span>
-              <span>SELECTED PROJECTS / 04</span>
+              <span>PORTFOLIO / 2026</span>
             </div>
 
             <h1 id="hero-title" className="hero-statement">
-              <span className="hero-line"><span>PUT YOUR</span></span>
-              <span className="hero-line hero-line-shift"><span>SHARPEST IDEA</span></span>
-              <span className="hero-line"><span>HERE.</span></span>
+              <span className="hero-line"><span>BUILDING TECHNICAL</span></span>
+              <span className="hero-line"><span>SYSTEMS THAT WORK.</span></span>
             </h1>
 
-            <div className="hero-side hero-reveal">
-              <span className="side-label">INTRODUCTION / 001</span>
-              <p>{siteContent.introduction}</p>
-              <div className="hero-details">
-                <span>{siteContent.role}</span>
-                <span>{siteContent.location}</span>
-              </div>
-            </div>
+            <HeroExplorer
+              activePanel={activeHeroPanel}
+              onSelect={selectHeroPanel}
+              skillsTreeRef={skillsTree}
+            />
 
             <a className="scroll-cue hero-reveal" href="#work">
               <span className="scroll-arrow"><ScrollArrow /></span>
               <span className="scroll-cue-copy">
-                <strong>VIEW SELECTED WORK</strong>
+                <strong>VIEW PROJECTS</strong>
                 <small>SCROLL DOWN</small>
               </span>
             </a>
           </div>
-          <span className="site-rule hero-bottom-rule" />
         </section>
 
         <section id="work" className="work-section" aria-labelledby="work-title">
           <header className="work-heading">
-            <span className="section-label">SELECTED WORK / 004</span>
-            <h2 id="work-title">
-              <span>PROJECT</span>
-              <span>INDEX</span>
-            </h2>
-            <p>
-              Each project has a concise preview here. Open one for the complete,
-              full-screen case study.
-            </p>
+            <h2 id="work-title" data-text="PROJECT INDEX">PROJECT INDEX</h2>
           </header>
 
           <div className="project-list">
             {projects.map((project) => (
               <article className="project-row" id={`project-${project.id}`} key={project.id}>
                 <button className="project-trigger" onClick={() => openProject(project)}>
-                  <div
-                    className="project-visual"
-                    style={{
-                      "--project-bg": project.background,
-                      "--project-fg": project.foreground,
-                      "--project-accent": project.accent,
-                    } as React.CSSProperties}
-                  >
-                    <ProjectArtwork project={project} />
-                    <span className="visual-index">{project.number} / 04</span>
-                    <span className="visual-action">VIEW CASE STUDY <Arrow /></span>
+                  <div className="project-media">
+                    <div
+                      className="project-visual"
+                      style={{
+                        "--project-bg": project.background,
+                        "--project-fg": project.foreground,
+                        "--project-accent": project.accent,
+                      } as React.CSSProperties}
+                    >
+                      <ProjectArtwork project={project} />
+                    </div>
+                    <span className="project-media-action project-copy-reveal">
+                      LEARN MORE ABOUT THIS PROJECT <Arrow />
+                    </span>
                   </div>
 
                   <div className="project-copy">
                     <div className="project-copy-top project-copy-reveal">
-                      <span>{project.number}</span>
+                      <h3>
+                        PROJECT {project.number.padStart(3, "0")} / {project.title}
+                      </h3>
                       <span>{project.year}</span>
                     </div>
-                    <h3 className="project-copy-reveal">{project.title}</h3>
-                    <div className="project-copy-bottom project-copy-reveal">
+                    <div className="project-copy-body project-copy-reveal">
                       <p>{project.summary}</p>
-                      <span className="open-label">OPEN PROJECT <Arrow diagonal /></span>
                     </div>
                   </div>
                 </button>
@@ -488,30 +761,19 @@ export default function Portfolio() {
 
         <footer id="contact" className="site-footer">
           <div className="footer-top">
-            <span className="section-label">NEXT STEP / CONTACT</span>
-            <span>{siteContent.availability}</span>
+            <span>WANT TO GET IN TOUCH?</span>
           </div>
-          <p>WANT TO REACH OUT?</p>
           <a
             href={`mailto:${siteContent.email}`}
             aria-label="Send me an email"
-            onMouseEnter={(event) => animateEmail(event.currentTarget, true)}
-            onMouseLeave={(event) => animateEmail(event.currentTarget, false)}
           >
-            <span className="email-roll-window">
-              <span className="email-roll-track">
-                <span>SEND ME AN EMAIL</span>
-                <span aria-hidden="true">SEND ME AN EMAIL</span>
-              </span>
+            <span className="email-chroma-text" data-text="SEND ME AN EMAIL">
+              SEND ME AN EMAIL
             </span>
             <span className="footer-email-arrow"><Arrow diagonal /></span>
           </a>
           <div className="footer-bottom">
             <span>© {new Date().getFullYear()} {siteContent.name}</span>
-            <div>
-              <a href="#contact">LINKEDIN ↗</a>
-              <a href="#contact">RÉSUMÉ ↗</a>
-            </div>
             <a href="#top">BACK TO TOP ↑</a>
           </div>
         </footer>
