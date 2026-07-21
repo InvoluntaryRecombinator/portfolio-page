@@ -610,7 +610,7 @@ export default function Portfolio() {
       }
 
       document.body.classList.add("intro-running");
-      introSafetyTimer = window.setTimeout(finishIntro, 6000);
+      introSafetyTimer = window.setTimeout(finishIntro, 8000);
 
       const introTimeline = gsap.timeline({
         defaults: { ease: "power3.out" },
@@ -650,14 +650,14 @@ export default function Portfolio() {
           { scaleX: 1, duration: 0.5, ease: "expo.inOut" },
           "-=0.25",
         )
-        .set(".intro-panel-content", { autoAlpha: 1 }, "+=0.3")
+        .set(".intro-panel-content", { autoAlpha: 1 }, "+=1.3")
         .set(".intro-grid-master", { autoAlpha: 0 }, "<")
         .to(
           ".intro-panel",
           {
             yPercent: -100,
-            duration: 0.95,
-            stagger: 0.07,
+            duration: 1.24,
+            stagger: 0.15,
             ease: "expo.inOut",
           },
           "<",
