@@ -1435,6 +1435,12 @@ a:focus-visible {
   width: min(70%, 960px);
 }
 
+.case-artwork-grvl {
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+}
+
 .artwork-grvl-video {
   display: grid;
   place-items: center;
@@ -1446,6 +1452,7 @@ a:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: center;
 }
 
 .case-artwork .fleetsync-lockup {

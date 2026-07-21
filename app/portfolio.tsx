@@ -28,21 +28,40 @@ function ScrollArrow() {
   );
 }
 
+function GrvlCaseVideo() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const playbackTimer = window.setTimeout(() => {
+      video.play().catch(() => {
+        // Muted inline playback is normally permitted; leave the first frame visible if blocked.
+      });
+    }, 1000);
+
+    return () => window.clearTimeout(playbackTimer);
+  }, []);
+
+  return (
+    <div className="artwork artwork-grvl-video">
+      <video
+        ref={videoRef}
+        className="grvl-case-video"
+        src="/assets/projects/grvl/GRVL-video.mp4"
+        muted
+        playsInline
+        preload="auto"
+        aria-label="GRVL project animation"
+      />
+    </div>
+  );
+}
+
 function ProjectArtwork({ project, large = false }: { project: Project; large?: boolean }) {
   if (project.id === "grvl" && large) {
-    return (
-      <div className="artwork artwork-grvl-video">
-        <video
-          className="grvl-case-video"
-          src="/assets/projects/grvl/GRVL-video.mp4"
-          autoPlay
-          muted
-          playsInline
-          preload="auto"
-          aria-label="GRVL project animation"
-        />
-      </div>
-    );
+    return <GrvlCaseVideo />;
   }
 
   if (project.visual === "image") {
@@ -1339,7 +1358,9 @@ export default function Portfolio() {
                   ))}
                 </h2>
               )}
-              <div className="case-artwork">
+              <div
+                className={`case-artwork${selectedProject.id === "grvl" ? " case-artwork-grvl" : ""}`}
+              >
                 <ProjectArtwork project={selectedProject} large />
               </div>
             </section>
