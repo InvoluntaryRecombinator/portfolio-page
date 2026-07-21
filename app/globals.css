@@ -438,7 +438,8 @@ a:focus-visible {
 }
 
 .about-connector,
-.skills-connector {
+.skills-connector,
+.working-connector {
   position: absolute;
   top: 0;
   left: 0;
@@ -450,13 +451,15 @@ a:focus-visible {
 }
 
 .about-connector.is-visible,
-.skills-connector.is-visible {
+.skills-connector.is-visible,
+.working-connector.is-visible {
   opacity: 1;
   visibility: visible;
 }
 
 .about-connector path,
-.skills-connector path {
+.skills-connector path,
+.working-connector path {
   fill: none;
   stroke: var(--ink);
   stroke-linecap: square;
@@ -497,8 +500,7 @@ a:focus-visible {
 
 .skills-category-label,
 .skills-leaf-label,
-.about-tree-location,
-.working-node {
+.about-tree-location {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   letter-spacing: 0.035em;
   text-transform: uppercase;
@@ -506,6 +508,10 @@ a:focus-visible {
 
 .hero-explorer.is-skills-panel {
   min-height: 460px;
+}
+
+.hero-explorer.is-working-panel {
+  min-height: 480px;
 }
 
 .skills-taxonomy {
@@ -621,26 +627,52 @@ a:focus-visible {
   mix-blend-mode: normal;
 }
 
-.working-node {
+.working-principles {
   position: absolute;
+  top: -48px;
+  right: 2%;
+  left: 24%;
   display: grid;
-  gap: 5px;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  height: 470px;
+}
+
+.working-principle {
+  position: relative;
+  z-index: 2;
+  align-self: center;
+  width: 100%;
+  background: var(--paper);
+}
+
+.working-principle-heading {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.working-principle-heading span {
+  color: var(--muted);
   font-size: 10px;
 }
 
-.working-node span {
-  color: var(--muted);
-  font-size: 9px;
-}
-
-.working-node strong {
-  font-size: clamp(11px, 1vw, 14px);
+.working-principle-heading strong {
+  font-size: clamp(11px, 0.9vw, 14px);
   font-weight: 500;
 }
 
-.working-node-requirements { top: 13%; left: 38%; }
-.working-node-execution { top: 42%; left: 49%; }
-.working-node-delivery { top: 72%; left: 41%; }
+.working-principle p {
+  max-width: 66ch;
+  margin: 10px 0 0 38px;
+  font-size: clamp(13px, 0.98vw, 15px);
+  letter-spacing: -0.018em;
+  line-height: 1.34;
+}
 
 .scroll-cue {
   display: flex;
@@ -1614,6 +1646,10 @@ a:focus-visible {
     min-height: 0;
   }
 
+  .hero-explorer.is-working-panel {
+    min-height: 0;
+  }
+
   .hero-controls {
     display: grid;
     grid-template-rows: none;
@@ -1640,9 +1676,14 @@ a:focus-visible {
     min-height: 620px;
   }
 
+  .hero-diagram.is-working-panel {
+    min-height: 590px;
+  }
+
   .hero-tree-lines,
   .about-connector,
   .skills-connector,
+  .working-connector,
   .tree-node {
     display: none;
   }
@@ -1703,19 +1744,26 @@ a:focus-visible {
     margin-left: 0;
   }
 
-  .working-node {
-    right: 0;
-    left: 0;
+  .working-principles {
+    position: static;
+    display: grid;
+    height: auto;
+    gap: 0;
+  }
+
+  .working-principle {
     padding: 18px 0;
     border-top: 1px solid var(--hairline);
   }
 
-  .working-node-requirements { top: 0; }
-  .working-node-execution { top: 94px; }
-  .working-node-delivery { top: 188px; }
+  .working-principle-heading strong {
+    font-size: 13px;
+  }
 
-  .working-node strong {
-    font-size: 14px;
+  .working-principle p {
+    max-width: 620px;
+    margin-top: 9px;
+    font-size: 15px;
   }
 
   .scroll-cue {

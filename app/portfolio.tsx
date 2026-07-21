@@ -155,6 +155,27 @@ const skillGroups = [
   },
 ] as const;
 
+const workingPrinciples = [
+  {
+    number: "01",
+    title: "EXTRACTING CLEAR REQUIREMENTS",
+    description:
+      "Taking the time to ask the right questions and understand exactly what needs to be built before jumping in.",
+  },
+  {
+    number: "02",
+    title: "COLLABORATIVE EXECUTION",
+    description:
+      "Whether I am collaborating with peers to solve problems in a team environment or relying on AI assistants when working alone, I focus on breaking down large problems into solvable chunks. It is all about separating tasks, supporting each other, and getting things done efficiently.",
+  },
+  {
+    number: "03",
+    title: "RELIABLE DELIVERY",
+    description:
+      "Focusing on shipping systems that actually work, testing the data, and making sure the final product matches the initial goal.",
+  },
+] as const;
+
 type AboutConnectorGeometry = {
   width: number;
   height: number;
@@ -188,6 +209,15 @@ type SkillsConnectorGeometry = {
   groups: SkillsConnectorGroupGeometry[];
 };
 
+type WorkingConnectorGeometry = {
+  width: number;
+  height: number;
+  startX: number;
+  startY: number;
+  trunkX: number;
+  targets: Array<{ x: number; y: number }>;
+};
+
 function HeroExplorer({
   activePanel,
   onSelect,
@@ -198,12 +228,15 @@ function HeroExplorer({
   const explorerRef = useRef<HTMLDivElement>(null);
   const aboutControlRef = useRef<HTMLButtonElement>(null);
   const skillsControlRef = useRef<HTMLButtonElement>(null);
+  const workingControlRef = useRef<HTMLButtonElement>(null);
   const skillsPanelRef = useRef<HTMLDivElement>(null);
+  const workingPanelRef = useRef<HTMLDivElement>(null);
   const portraitRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const locationRef = useRef<HTMLDivElement>(null);
   const [aboutConnector, setAboutConnector] = useState<AboutConnectorGeometry | null>(null);
   const [skillsConnector, setSkillsConnector] = useState<SkillsConnectorGeometry | null>(null);
+  const [workingConnector, setWorkingConnector] = useState<WorkingConnectorGeometry | null>(null);
   const controlsOffset = 56;
 
   useLayoutEffect(() => {
@@ -256,6 +289,61 @@ function HeroExplorer({
 
     const resizeObserver = new ResizeObserver(measure);
     [explorer, control, portrait, copy, location].forEach((element) => resizeObserver.observe(element));
+    window.addEventListener("resize", measure);
+    measure();
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [activePanel, controlsOffset]);
+
+  useLayoutEffect(() => {
+    if (activePanel !== "working") return;
+
+    const explorer = explorerRef.current;
+    const control = workingControlRef.current;
+    const panel = workingPanelRef.current;
+    if (!explorer || !control || !panel) return;
+
+    const principles = Array.from(
+      panel.querySelectorAll<HTMLElement>("[data-working-principle]"),
+    );
+    if (principles.length !== workingPrinciples.length) return;
+
+    let frame = 0;
+    const measure = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const explorerRect = explorer.getBoundingClientRect();
+        const controlRect = control.getBoundingClientRect();
+        const principleRects = principles.map((principle) => principle.getBoundingClientRect());
+        const relativeCenterY = (rect: DOMRect) =>
+          Math.round(rect.top + rect.height / 2 - explorerRect.top);
+        const terminalGap = 22;
+        const startX = Math.round(controlRect.right - explorerRect.left);
+        const targets = principleRects.map((rect) => ({
+          x: Math.round(rect.left - explorerRect.left - terminalGap),
+          y: relativeCenterY(rect),
+        }));
+        const nearestTargetX = Math.min(...targets.map((target) => target.x));
+
+        setWorkingConnector({
+          width: Math.round(explorerRect.width),
+          height: Math.ceil(
+            Math.max(explorerRect.height, ...principleRects.map((rect) => rect.bottom - explorerRect.top)),
+          ),
+          startX,
+          startY: relativeCenterY(controlRect),
+          trunkX: Math.round(startX + (nearestTargetX - startX) * 0.46),
+          targets,
+        });
+      });
+    };
+
+    const resizeObserver = new ResizeObserver(measure);
+    [explorer, control, panel, ...principles].forEach((element) => resizeObserver.observe(element));
     window.addEventListener("resize", measure);
     measure();
 
@@ -359,6 +447,12 @@ function HeroExplorer({
   const skillsConnectorBottom = skillsConnector
     ? Math.max(skillsConnector.startY, ...skillsConnector.groups.map((group) => group.categoryY))
     : 0;
+  const workingConnectorTop = workingConnector
+    ? Math.min(workingConnector.startY, ...workingConnector.targets.map((target) => target.y))
+    : 0;
+  const workingConnectorBottom = workingConnector
+    ? Math.max(workingConnector.startY, ...workingConnector.targets.map((target) => target.y))
+    : 0;
 
   return (
     <div
@@ -408,6 +502,22 @@ function HeroExplorer({
         </svg>
       ) : null}
 
+      {workingConnector ? (
+        <svg
+          className={`working-connector ${activePanel === "working" ? "is-visible" : ""}`}
+          viewBox={`0 0 ${workingConnector.width} ${workingConnector.height}`}
+          width={workingConnector.width}
+          height={workingConnector.height}
+          aria-hidden="true"
+        >
+          <path d={`M${workingConnector.startX} ${workingConnector.startY}H${workingConnector.trunkX}`} />
+          <path d={`M${workingConnector.trunkX} ${workingConnectorTop}V${workingConnectorBottom}`} />
+          {workingConnector.targets.map((target, index) => (
+            <path key={workingPrinciples[index].number} d={`M${workingConnector.trunkX} ${target.y}H${target.x}`} />
+          ))}
+        </svg>
+      ) : null}
+
       <div className="hero-controls" aria-label="Portfolio information">
         {heroPanelLabels.map((panel) => (
           <button
@@ -417,7 +527,7 @@ function HeroExplorer({
                 ? aboutControlRef
                 : panel.id === "skills"
                   ? skillsControlRef
-                  : undefined
+                  : workingControlRef
             }
             type="button"
             className={`hero-control ${activePanel === panel.id ? "is-active" : ""}`}
@@ -492,27 +602,25 @@ function HeroExplorer({
         </div>
 
         <div
+          ref={workingPanelRef}
           id="hero-panel-working"
           className={`hero-tree hero-tree-working ${activePanel === "working" ? "is-active" : ""}`}
           aria-hidden={activePanel !== "working"}
         >
-          <svg className="hero-tree-lines" viewBox="0 0 900 300" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0 172H115V62" />
-            <path d="M115 62H330" />
-            <path d="M115 150H430" />
-            <path d="M115 238H360" />
-          </svg>
-          <div className="working-node working-node-requirements">
-            <span>01</span>
-            <strong>CLEAR REQUIREMENTS</strong>
-          </div>
-          <div className="working-node working-node-execution">
-            <span>02</span>
-            <strong>INDEPENDENT EXECUTION</strong>
-          </div>
-          <div className="working-node working-node-delivery">
-            <span>03</span>
-            <strong>RELIABLE DELIVERY</strong>
+          <div className="working-principles">
+            {workingPrinciples.map((principle) => (
+              <section
+                className="working-principle"
+                data-working-principle
+                key={principle.number}
+              >
+                <div className="working-principle-heading">
+                  <span>{principle.number}</span>
+                  <strong>{principle.title}</strong>
+                </div>
+                <p>{principle.description}</p>
+              </section>
+            ))}
           </div>
         </div>
       </div>
