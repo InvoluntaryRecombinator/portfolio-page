@@ -30,7 +30,7 @@ For each item, replace the text inside the **Replacement** block.
 
 **Current verbatim text:**
 
-> "YOUR NAME"
+> "JORDON WALSH"
 
 **Replacement:**
 
@@ -62,7 +62,7 @@ For each item, replace the text inside the **Replacement** block.
 
 **Current verbatim text:**
 
-> "YOUR LOCATION"
+> "CALIFORNIA, USA"
 
 **Replacement:**
 
@@ -142,7 +142,7 @@ For each item, replace the text inside the **Replacement** block.
 
 **Current verbatim text:**
 
-> "Your Name — Selected Work"
+> "Jordon Walsh — Selected Work"
 
 **Replacement:**
 
@@ -1178,7 +1178,7 @@ These labels are shared by every expanded project.
 
 **Current generated format:**
 
-> "© 2026 YOUR NAME"
+> "© 2026 JORDON WALSH"
 
 **Replacement:**
 

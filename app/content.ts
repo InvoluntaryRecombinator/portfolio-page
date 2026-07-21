@@ -15,9 +15,9 @@ export type Project = {
 };
 
 export const siteContent = {
-  name: "YOUR NAME",
+  name: "JORDON WALSH",
   role: "DESIGNER + DEVELOPER",
-  location: "YOUR LOCATION",
+  location: "CALIFORNIA, USA",
   availability: "AVAILABLE FOR SELECTED WORK",
   statement: "BUILDING TECHNICAL SYSTEMS THAT WORK.",
   introduction:
