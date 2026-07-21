@@ -559,10 +559,16 @@ a:focus-visible {
   font-size: clamp(10px, 0.75vw, 12px);
 }
 
-@media (prefers-reduced-motion: no-preference) {
+@media (prefers-reduced-motion: no-preference) and (min-width: 841px) {
+  .about-connector path,
   .skills-connector path,
+  .working-connector path,
+  .hero-tree-about .about-tree-portrait,
+  .hero-tree-about .about-tree-copy,
+  .hero-tree-about .about-tree-location,
   .hero-tree-skills .skills-category-label,
-  .hero-tree-skills .skills-leaf-label {
+  .hero-tree-skills .skills-leaf-label,
+  .hero-tree-working .working-principle {
     opacity: 0;
   }
 }

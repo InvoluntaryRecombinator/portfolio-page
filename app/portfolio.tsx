@@ -234,8 +234,10 @@ function HeroExplorer({
   const portraitRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const locationRef = useRef<HTMLDivElement>(null);
-  const skillsTimelineRef = useRef<ReturnType<typeof gsap.timeline> | null>(null);
-  const skillsClosingRef = useRef(false);
+  const panelTimelinesRef = useRef<
+    Partial<Record<HeroPanel, ReturnType<typeof gsap.timeline>>>
+  >({});
+  const panelClosingRef = useRef(false);
   const [aboutConnector, setAboutConnector] = useState<AboutConnectorGeometry | null>(null);
   const [skillsConnector, setSkillsConnector] = useState<SkillsConnectorGeometry | null>(null);
   const [workingConnector, setWorkingConnector] = useState<WorkingConnectorGeometry | null>(null);
@@ -438,8 +440,66 @@ function HeroExplorer({
   }, [activePanel, controlsOffset]);
 
   useLayoutEffect(() => {
+    if (activePanel !== "about" || !aboutConnector) return;
+
+    const panelTimelines = panelTimelinesRef.current;
+    const svg = explorerRef.current?.querySelector<SVGSVGElement>(".about-connector");
+    const portrait = portraitRef.current;
+    const copy = copyRef.current;
+    const location = locationRef.current;
+    if (!svg || !portrait || !copy || !location) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const mobileLayout = window.matchMedia("(max-width: 840px)").matches;
+    if (reduceMotion || mobileLayout) {
+      delete panelTimelines.about;
+      panelClosingRef.current = false;
+      return;
+    }
+
+    const rootPath = svg.querySelector<SVGPathElement>(".about-path-root");
+    const mainTrunks = Array.from(svg.querySelectorAll<SVGPathElement>(".about-path-main-trunk"));
+    const branches = Array.from(svg.querySelectorAll<SVGPathElement>(".about-path-branch"));
+    const allPaths = [rootPath, ...mainTrunks, ...branches].filter(
+      (path): path is SVGPathElement => Boolean(path),
+    );
+    const content = [portrait, copy, location];
+
+    allPaths.forEach((path) => {
+      const length = Math.max(path.getTotalLength(), 1);
+      gsap.set(path, {
+        opacity: 1,
+        strokeDasharray: length,
+        strokeDashoffset: length,
+      });
+    });
+    gsap.set(content, { autoAlpha: 0 });
+
+    const timeline = gsap.timeline({ paused: true, defaults: { ease: "power2.inOut" } });
+    timeline
+      .to(rootPath, { strokeDashoffset: 0, duration: 0.34 })
+      .to(mainTrunks, { strokeDashoffset: 0, duration: 0.44 }, "-=0.02")
+      .to(branches, { strokeDashoffset: 0, duration: 0.34 })
+      .to(content, { autoAlpha: 1, duration: 0.3, stagger: 0.08 }, "-=0.06");
+
+    panelTimelines.about = timeline;
+    panelClosingRef.current = false;
+    timeline.play(0);
+
+    return () => {
+      if (panelTimelines.about === timeline) {
+        delete panelTimelines.about;
+      }
+      timeline.kill();
+      gsap.set(allPaths, { clearProps: "opacity,strokeDasharray,strokeDashoffset" });
+      gsap.set(content, { clearProps: "opacity,visibility" });
+    };
+  }, [activePanel, aboutConnector]);
+
+  useLayoutEffect(() => {
     if (activePanel !== "skills" || !skillsConnector) return;
 
+    const panelTimelines = panelTimelinesRef.current;
     const panel = skillsPanelRef.current;
     const svg = explorerRef.current?.querySelector<SVGSVGElement>(".skills-connector");
     if (!panel || !svg) return;
@@ -447,8 +507,8 @@ function HeroExplorer({
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobileLayout = window.matchMedia("(max-width: 840px)").matches;
     if (reduceMotion || mobileLayout) {
-      skillsTimelineRef.current = null;
-      skillsClosingRef.current = false;
+      delete panelTimelines.skills;
+      panelClosingRef.current = false;
       return;
     }
 
@@ -490,38 +550,99 @@ function HeroExplorer({
       .to(leafPaths, { strokeDashoffset: 0, duration: 0.28 })
       .to(leafLabels, { autoAlpha: 1, duration: 0.2 }, "-=0.06");
 
-    skillsTimelineRef.current = timeline;
-    skillsClosingRef.current = false;
+    panelTimelines.skills = timeline;
+    panelClosingRef.current = false;
     timeline.play(0);
 
     return () => {
-      if (skillsTimelineRef.current === timeline) skillsTimelineRef.current = null;
+      if (panelTimelines.skills === timeline) {
+        delete panelTimelines.skills;
+      }
       timeline.kill();
       gsap.set(allPaths, { clearProps: "opacity,strokeDasharray,strokeDashoffset" });
       gsap.set([...categoryLabels, ...leafLabels], { clearProps: "opacity,visibility" });
     };
   }, [activePanel, skillsConnector]);
 
-  const handlePanelSelect = (panel: HeroPanel) => {
-    const skillsTimeline = skillsTimelineRef.current;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  useLayoutEffect(() => {
+    if (activePanel !== "working" || !workingConnector) return;
 
-    if (
-      activePanel === "skills" &&
-      skillsTimeline &&
-      !reduceMotion &&
-      !skillsClosingRef.current
-    ) {
-      skillsClosingRef.current = true;
-      skillsTimeline.eventCallback("onReverseComplete", () => {
-        skillsClosingRef.current = false;
-        onSelect(panel);
-      });
-      skillsTimeline.reverse();
+    const panelTimelines = panelTimelinesRef.current;
+    const panel = workingPanelRef.current;
+    const svg = explorerRef.current?.querySelector<SVGSVGElement>(".working-connector");
+    if (!panel || !svg) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const mobileLayout = window.matchMedia("(max-width: 840px)").matches;
+    if (reduceMotion || mobileLayout) {
+      delete panelTimelines.working;
+      panelClosingRef.current = false;
       return;
     }
 
-    if (!skillsClosingRef.current) onSelect(panel);
+    const rootPath = svg.querySelector<SVGPathElement>(".working-path-root");
+    const mainTrunks = Array.from(
+      svg.querySelectorAll<SVGPathElement>(".working-path-main-trunk"),
+    );
+    const branches = Array.from(svg.querySelectorAll<SVGPathElement>(".working-path-branch"));
+    const principles = Array.from(
+      panel.querySelectorAll<HTMLElement>("[data-working-principle]"),
+    );
+    const allPaths = [rootPath, ...mainTrunks, ...branches].filter(
+      (path): path is SVGPathElement => Boolean(path),
+    );
+
+    allPaths.forEach((path) => {
+      const length = Math.max(path.getTotalLength(), 1);
+      gsap.set(path, {
+        opacity: 1,
+        strokeDasharray: length,
+        strokeDashoffset: length,
+      });
+    });
+    gsap.set(principles, { autoAlpha: 0 });
+
+    const timeline = gsap.timeline({ paused: true, defaults: { ease: "power2.inOut" } });
+    timeline
+      .to(rootPath, { strokeDashoffset: 0, duration: 0.34 })
+      .to(mainTrunks, { strokeDashoffset: 0, duration: 0.44 }, "-=0.02")
+      .to(branches, { strokeDashoffset: 0, duration: 0.34 })
+      .to(principles, { autoAlpha: 1, duration: 0.3, stagger: 0.08 }, "-=0.06");
+
+    panelTimelines.working = timeline;
+    panelClosingRef.current = false;
+    timeline.play(0);
+
+    return () => {
+      if (panelTimelines.working === timeline) {
+        delete panelTimelines.working;
+      }
+      timeline.kill();
+      gsap.set(allPaths, { clearProps: "opacity,strokeDasharray,strokeDashoffset" });
+      gsap.set(principles, { clearProps: "opacity,visibility" });
+    };
+  }, [activePanel, workingConnector]);
+
+  const handlePanelSelect = (panel: HeroPanel) => {
+    const activeTimeline = activePanel ? panelTimelinesRef.current[activePanel] : null;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (
+      activePanel &&
+      activeTimeline &&
+      !reduceMotion &&
+      !panelClosingRef.current
+    ) {
+      panelClosingRef.current = true;
+      activeTimeline.eventCallback("onReverseComplete", () => {
+        panelClosingRef.current = false;
+        onSelect(panel);
+      });
+      activeTimeline.reverse();
+      return;
+    }
+
+    if (!panelClosingRef.current) onSelect(panel);
   };
 
   const connectorTop = aboutConnector
@@ -557,11 +678,30 @@ function HeroExplorer({
           height={aboutConnector.height}
           aria-hidden="true"
         >
-          <path d={`M${aboutConnector.startX} ${aboutConnector.startY}H${aboutConnector.trunkX}`} />
-          <path d={`M${aboutConnector.trunkX} ${connectorTop}V${connectorBottom}`} />
-          <path d={`M${aboutConnector.trunkX} ${aboutConnector.portraitY}H${aboutConnector.portraitX}`} />
-          <path d={`M${aboutConnector.trunkX} ${aboutConnector.copyY}H${aboutConnector.copyX}`} />
-          <path d={`M${aboutConnector.trunkX} ${aboutConnector.locationY}H${aboutConnector.locationX}`} />
+          <path
+            className="about-path-root"
+            d={`M${aboutConnector.startX} ${aboutConnector.startY}H${aboutConnector.trunkX}`}
+          />
+          <path
+            className="about-path-main-trunk"
+            d={`M${aboutConnector.trunkX} ${aboutConnector.startY}V${connectorTop}`}
+          />
+          <path
+            className="about-path-main-trunk"
+            d={`M${aboutConnector.trunkX} ${aboutConnector.startY}V${connectorBottom}`}
+          />
+          <path
+            className="about-path-branch"
+            d={`M${aboutConnector.trunkX} ${aboutConnector.portraitY}H${aboutConnector.portraitX}`}
+          />
+          <path
+            className="about-path-branch"
+            d={`M${aboutConnector.trunkX} ${aboutConnector.copyY}H${aboutConnector.copyX}`}
+          />
+          <path
+            className="about-path-branch"
+            d={`M${aboutConnector.trunkX} ${aboutConnector.locationY}H${aboutConnector.locationX}`}
+          />
         </svg>
       ) : null}
 
@@ -623,10 +763,24 @@ function HeroExplorer({
           height={workingConnector.height}
           aria-hidden="true"
         >
-          <path d={`M${workingConnector.startX} ${workingConnector.startY}H${workingConnector.trunkX}`} />
-          <path d={`M${workingConnector.trunkX} ${workingConnectorTop}V${workingConnectorBottom}`} />
+          <path
+            className="working-path-root"
+            d={`M${workingConnector.startX} ${workingConnector.startY}H${workingConnector.trunkX}`}
+          />
+          <path
+            className="working-path-main-trunk"
+            d={`M${workingConnector.trunkX} ${workingConnector.startY}V${workingConnectorTop}`}
+          />
+          <path
+            className="working-path-main-trunk"
+            d={`M${workingConnector.trunkX} ${workingConnector.startY}V${workingConnectorBottom}`}
+          />
           {workingConnector.targets.map((target, index) => (
-            <path key={workingPrinciples[index].number} d={`M${workingConnector.trunkX} ${target.y}H${target.x}`} />
+            <path
+              className="working-path-branch"
+              key={workingPrinciples[index].number}
+              d={`M${workingConnector.trunkX} ${target.y}H${target.x}`}
+            />
           ))}
         </svg>
       ) : null}
