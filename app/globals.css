@@ -691,11 +691,12 @@ a:focus-visible {
 .scroll-cue {
   display: flex;
   flex-direction: column;
-  grid-column: 1 / 4;
+  grid-column: 1 / 13;
   grid-row: 4;
   gap: 12px;
   align-items: center;
   align-self: end;
+  justify-self: center;
   width: max-content;
   text-align: center;
   padding: 18px 0 25px;
@@ -1796,9 +1797,10 @@ a:focus-visible {
   }
 
   .scroll-cue {
-    grid-column: 1 / 8;
+    grid-column: 1 / 13;
     grid-row: 4;
     align-self: end;
+    justify-self: center;
     padding-top: 36px;
   }
 

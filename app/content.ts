@@ -32,7 +32,7 @@ export const projects: Project[] = [
     id: "grvl",
     number: "01",
     title: "GRVL",
-    year: "YEAR",
+    year: "2026",
     summary:
       "Replace this with a concise explanation of GRVL—what it is, what you made, and why the work matters.",
     visual: "image",
@@ -47,7 +47,7 @@ export const projects: Project[] = [
     id: "fleetsync",
     number: "02",
     title: "FLEETSYNC",
-    year: "YEAR",
+    year: "2026",
     summary:
       "Replace this with a concise explanation of FleetSync—what it does, what you designed, and why it matters.",
     visual: "fleetsync",
@@ -60,7 +60,7 @@ export const projects: Project[] = [
     id: "project-three",
     number: "03",
     title: "PROJECT THREE",
-    year: "YEAR",
+    year: "2026",
     summary:
       "A short description of project three goes here. The visual system works even before final assets are available.",
     visual: "grid",
@@ -74,7 +74,7 @@ export const projects: Project[] = [
     id: "project-four",
     number: "04",
     title: "PROJECT FOUR",
-    year: "YEAR",
+    year: "2026",
     summary:
       "A short description of project four goes here. Later, replace only the content and artwork—not the interaction.",
     visual: "orbit",
