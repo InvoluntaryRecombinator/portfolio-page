@@ -1020,13 +1020,13 @@ Removed. The cue now uses one centered label above the arrow.
 
 These labels are shared by every expanded project.
 
-## 73. Project header label
+## 73. Project header center
 
 **Where:** Center of the fixed project header.
 
-**Current generated format:**
+**Current state:**
 
-> "PROJECT / 01"
+> Intentionally empty. The project number already appears below the header.
 
 **Replacement:**
 
@@ -1062,13 +1062,13 @@ These labels are shared by every expanded project.
 [KEEP FORMAT, REPLACE, OR REMOVE]
 ```
 
-## 76. Overview label
+## 76. Project-details label
 
-**Where:** Left side of the project overview.
+**Where:** Centered above the project-details area.
 
 **Current verbatim text:**
 
-> "OVERVIEW / 001"
+> "PROJECT DETAILS"
 
 **Replacement:**
 

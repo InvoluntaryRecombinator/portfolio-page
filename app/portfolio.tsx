@@ -1316,7 +1316,6 @@ export default function Portfolio() {
           <div className="case-scroller">
             <header className="case-header">
               <span>{siteContent.name}</span>
-              <span>PROJECT / {selectedProject.number}</span>
               <button ref={closeButton} onClick={closeProject} aria-label="Close project">
                 CLOSE <span className="close-icon">×</span>
               </button>
@@ -1345,12 +1344,12 @@ export default function Portfolio() {
             <section className={`case-body${selectedProject.id === "fleetsync" ? " case-body-empty" : ""}`}>
               {selectedProject.id === "fleetsync" ? (
                 <div className="case-empty-space">
-                  <span className="section-label">PROJECT DETAILS / 001</span>
+                  <h2 className="case-section-heading">PROJECT DETAILS</h2>
                 </div>
               ) : (
                 <>
                   <div className="case-lead">
-                    <span className="section-label">OVERVIEW / 001</span>
+                    <h2 className="case-section-heading">PROJECT DETAILS</h2>
                     <p>{selectedProject.overview}</p>
                   </div>
                   <div className="case-placeholder">
