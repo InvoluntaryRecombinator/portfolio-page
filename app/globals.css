@@ -698,8 +698,12 @@ a:focus-visible {
   align-self: end;
   justify-self: center;
   width: max-content;
+  margin: 0;
   text-align: center;
   padding: 18px 0 25px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
 }
 
 .scroll-arrow {

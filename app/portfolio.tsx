@@ -936,6 +936,7 @@ export default function Portfolio() {
   const root = useRef<HTMLDivElement>(null);
   const overlay = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
+  const pageScrollPosition = useRef(0);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isClosing, setIsClosing] = useState(false);
   const [activeHeroPanel, setActiveHeroPanel] = useState<HeroPanel | null>(null);
@@ -946,6 +947,7 @@ export default function Portfolio() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setSelectedProject(null);
       window.history.replaceState({}, "", window.location.pathname);
+      window.requestAnimationFrame(() => window.scrollTo({ top: pageScrollPosition.current }));
       return;
     }
 
@@ -956,6 +958,7 @@ export default function Portfolio() {
         setSelectedProject(null);
         setIsClosing(false);
         window.history.replaceState({}, "", window.location.pathname);
+        window.requestAnimationFrame(() => window.scrollTo({ top: pageScrollPosition.current }));
       },
     });
 
@@ -1167,21 +1170,44 @@ export default function Portfolio() {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [selectedProject]);
+
+  useEffect(() => {
+    if (!selectedProject) return;
+
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") closeProject();
     };
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [selectedProject, closeProject]);
 
   const openProject = (project: Project) => {
     if (selectedProject) return;
+    pageScrollPosition.current = window.scrollY;
     window.history.replaceState({}, "", `${window.location.pathname}?project=${project.id}`);
     setSelectedProject(project);
+  };
+
+  const scrollToProjects = () => {
+    const workSection = document.getElementById("work");
+    if (!workSection) return;
+
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.pathname}${window.location.search}`,
+    );
+    workSection.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "start",
+    });
   };
 
   const selectHeroPanel = (panel: HeroPanel) => {
@@ -1204,7 +1230,6 @@ export default function Portfolio() {
           </a>
         </div>
         <nav className="site-nav header-reveal" aria-label="Primary navigation">
-          <a href="#work">PROJECTS <Arrow diagonal /></a>
           <a href={`mailto:${siteContent.email}`}>CONTACT <Arrow diagonal /></a>
           <a href={siteContent.linkedin} target="_blank" rel="noreferrer">LINKEDIN <Arrow diagonal /></a>
           <a href={siteContent.github} target="_blank" rel="noreferrer">GITHUB <Arrow diagonal /></a>
@@ -1229,12 +1254,12 @@ export default function Portfolio() {
               onSelect={selectHeroPanel}
             />
 
-            <a className="scroll-cue hero-reveal" href="#work">
+            <button className="scroll-cue hero-reveal" type="button" onClick={scrollToProjects}>
               <span className="scroll-cue-copy">
                 <strong>VIEW PROJECTS</strong>
               </span>
               <span className="scroll-arrow"><ScrollArrow /></span>
-            </a>
+            </button>
           </div>
         </section>
 
