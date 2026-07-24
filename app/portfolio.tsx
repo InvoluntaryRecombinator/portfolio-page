@@ -28,7 +28,7 @@ function ScrollArrow() {
   );
 }
 
-function GrvlCaseVideo() {
+function ProjectCaseVideo({ project }: { project: Project }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -45,23 +45,34 @@ function GrvlCaseVideo() {
   }, []);
 
   return (
-    <div className="artwork artwork-grvl-video">
+    <div className="artwork artwork-case-video">
       <video
         ref={videoRef}
-        className="grvl-case-video"
-        src="/assets/projects/grvl/GRVL-video.mp4"
+        className="project-case-video"
+        src={project.video}
+        poster={project.videoPoster}
+        autoPlay
         muted
         playsInline
         preload="auto"
-        aria-label="GRVL project animation"
+        aria-label={`${project.title} project animation`}
       />
     </div>
   );
 }
 
 function ProjectArtwork({ project, large = false }: { project: Project; large?: boolean }) {
-  if (project.id === "grvl" && large) {
-    return <GrvlCaseVideo />;
+  if (project.video && large) {
+    return <ProjectCaseVideo project={project} />;
+  }
+
+  if (project.caseImage && large) {
+    return (
+      <div className="artwork artwork-case-image">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={project.caseImage} alt={`${project.title} application interface`} />
+      </div>
+    );
   }
 
   if (project.visual === "image") {
@@ -69,7 +80,7 @@ function ProjectArtwork({ project, large = false }: { project: Project; large?: 
       <div className="artwork artwork-image">
         {/* The source artwork is already export-sized and must preserve its transparency. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={project.image} alt="GRVL project logo" />
+        <img src={project.image} alt={`${project.title} project logo`} />
       </div>
     );
   }
@@ -111,6 +122,103 @@ function ProjectArtwork({ project, large = false }: { project: Project; large?: 
         <circle cx="400" cy="300" r="63" />
         <circle className="orbit-dot" cx="704" cy="278" r="18" />
       </svg>
+    </div>
+  );
+}
+
+function CaseStudyDetails({ project }: { project: Project }) {
+  if (!project.caseStudy) {
+    if (!project.overview) return null;
+
+    return (
+      <div className="case-details">
+        <section className="case-detail-section">
+          <h3 className="case-detail-label">OVERVIEW / 01</h3>
+          <div className="case-detail-content case-problem-copy">
+            <p>{project.overview}</p>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  const {
+    architecture,
+    context,
+    contextLabel,
+    execution,
+    liveUrl,
+    problem,
+    sourceUrl,
+  } = project.caseStudy;
+
+  return (
+    <div className="case-details">
+      <header className="case-details-header">
+        <span>PROJECT DETAILS / {project.number}</span>
+        <nav
+          className={`case-project-links${sourceUrl ? "" : " is-single"}`}
+          aria-label={`${project.title} project links`}
+        >
+          <a href={liveUrl} target="_blank" rel="noreferrer">
+            VIEW LIVE DEMO <Arrow diagonal />
+          </a>
+          {sourceUrl && (
+            <a href={sourceUrl} target="_blank" rel="noreferrer">
+              VIEW SOURCE CODE <Arrow diagonal />
+            </a>
+          )}
+        </nav>
+      </header>
+
+      {context && (
+        <aside className="case-project-context" aria-label="Project context">
+          <span>{contextLabel ?? "LIVE DEPLOYMENT"}</span>
+          <p>{context}</p>
+        </aside>
+      )}
+
+      <section className="case-detail-section">
+        <h3 className="case-detail-label">THE PROBLEM / 01</h3>
+        <div className="case-detail-content case-problem-copy">
+          {problem.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
+      </section>
+
+      <section className="case-detail-section">
+        <h3 className="case-detail-label">ARCHITECTURE / 02</h3>
+        <div className="case-detail-content">
+          <ul className="case-architecture-list">
+            {architecture.map((item) => (
+              <li key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="case-detail-section">
+        <h3 className="case-detail-label">EXECUTION / 03</h3>
+        <div className="case-detail-content">
+          <ol className="case-execution-list">
+            {execution.map((item, index) => (
+              <li key={item.title}>
+                <span className="case-execution-number">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h4>{item.title}</h4>
+                  <p>{item.description}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
     </div>
   );
 }
@@ -1167,11 +1275,14 @@ export default function Portfolio() {
 
   useEffect(() => {
     if (!selectedProject) return;
-    const previousOverflow = document.body.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
 
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
     };
   }, [selectedProject]);
 
@@ -1360,29 +1471,14 @@ export default function Portfolio() {
                 </h2>
               )}
               <div
-                className={`case-artwork${selectedProject.id === "grvl" ? " case-artwork-grvl" : ""}`}
+                className={`case-artwork${selectedProject.video ? " case-artwork-video" : ""}${selectedProject.caseImage ? " case-artwork-interface" : ""}`}
               >
                 <ProjectArtwork project={selectedProject} large />
               </div>
             </section>
 
-            <section className={`case-body${selectedProject.id === "fleetsync" ? " case-body-empty" : ""}`}>
-              {selectedProject.id === "fleetsync" ? (
-                <div className="case-empty-space">
-                  <h2 className="case-section-heading">PROJECT DETAILS</h2>
-                </div>
-              ) : (
-                <>
-                  <div className="case-lead">
-                    <h2 className="case-section-heading">PROJECT DETAILS</h2>
-                    <p>{selectedProject.overview}</p>
-                  </div>
-                  <div className="case-placeholder">
-                    <span>PROJECT IMAGE / 002</span>
-                    <p>ONE STRONG PROJECT IMAGE CAN LIVE HERE.</p>
-                  </div>
-                </>
-              )}
+            <section className="case-body">
+              <CaseStudyDetails project={selectedProject} />
               <div className="case-end">
                 <span>END OF PROJECT / {selectedProject.number}</span>
                 <button onClick={closeProject}>BACK TO PROJECTS <Arrow /></button>
