@@ -410,11 +410,11 @@ For each item, replace the text inside the **Replacement** block.
 
 ## 26. Scroll-control main label
 
-**Where:** Large arrow control at the lower-left of the hero.
+**Where:** Centered above the large arrow control at the lower-left of the hero.
 
 **Current verbatim text:**
 
-> "VIEW SELECTED WORK"
+> "VIEW PROJECTS"
 
 **Replacement:**
 
@@ -424,17 +424,7 @@ For each item, replace the text inside the **Replacement** block.
 
 ## 27. Scroll-control supporting label
 
-**Where:** Under the scroll-control main label.
-
-**Current verbatim text:**
-
-> "SCROLL DOWN"
-
-**Replacement:**
-
-```text
-[KEEP OR REPLACE]
-```
+Removed. The cue now uses one centered label above the arrow.
 
 ---
 
@@ -1014,13 +1004,13 @@ For each item, replace the text inside the **Replacement** block.
 
 These labels are shared by every expanded project.
 
-## 73. Case-study header label
+## 73. Project header label
 
-**Where:** Center of the fixed case-study header.
+**Where:** Center of the fixed project header.
 
 **Current generated format:**
 
-> "CASE STUDY / 01"
+> "PROJECT / 01"
 
 **Replacement:**
 
@@ -1255,16 +1245,16 @@ keyboard users.
 [KEEP OR REPLACE]
 ```
 
-## 90. Case-study dialog label format
+## 90. Project dialog label format
 
 **Current generated format:**
 
-> "GRVL case study"
+> "GRVL project 01"
 
 **Replacement:**
 
 ```text
-[KEEP AUTOMATIC PROJECT TITLE + “case study”, OR SPECIFY ANOTHER FORMAT]
+[KEEP AUTOMATIC PROJECT TITLE + PROJECT NUMBER, OR SPECIFY ANOTHER FORMAT]
 ```
 
 ## 91. Close-project accessible label

@@ -1254,11 +1254,10 @@ export default function Portfolio() {
             />
 
             <a className="scroll-cue hero-reveal" href="#work">
-              <span className="scroll-arrow"><ScrollArrow /></span>
               <span className="scroll-cue-copy">
                 <strong>VIEW PROJECTS</strong>
-                <small>SCROLL DOWN</small>
               </span>
+              <span className="scroll-arrow"><ScrollArrow /></span>
             </a>
           </div>
         </section>
@@ -1331,7 +1330,7 @@ export default function Portfolio() {
           className="case-overlay"
           role="dialog"
           aria-modal="true"
-          aria-label={`${selectedProject.title} case study`}
+          aria-label={`${selectedProject.title} project ${selectedProject.number}`}
           style={{
             "--project-bg": selectedProject.background,
             "--project-fg": selectedProject.foreground,
@@ -1341,7 +1340,7 @@ export default function Portfolio() {
           <div className="case-scroller">
             <header className="case-header">
               <span>{siteContent.name}</span>
-              <span>CASE STUDY / {selectedProject.number}</span>
+              <span>PROJECT / {selectedProject.number}</span>
               <button ref={closeButton} onClick={closeProject} aria-label="Close project">
                 CLOSE <span className="close-icon">×</span>
               </button>
