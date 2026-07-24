@@ -94,7 +94,7 @@ For each item, replace the text inside the **Replacement** block.
 
 **Current verbatim value:**
 
-> "EMAIL@EXAMPLE.COM"
+> "jwalb90@gmail.com"
 
 **Replacement:**
 
@@ -104,18 +104,34 @@ For each item, replace the text inside the **Replacement** block.
 
 ## 6. LinkedIn URL
 
-**Where:** Fixed header and footer.
+**Where:** Fixed header.
 
 **What it does:** Opens your LinkedIn profile.
 
 **Current value:**
 
-> No real URL yet. The links currently point to the contact section.
+> "https://www.linkedin.com/in/jordan-walsh-dev"
 
 **Replacement:**
 
 ```text
 [PASTE FULL LINKEDIN URL HERE]
+```
+
+## 6A. GitHub URL
+
+**Where:** Fixed header.
+
+**What it does:** Opens your GitHub profile.
+
+**Current value:**
+
+> "https://github.com/InvoluntaryRecombinator"
+
+**Replacement:**
+
+```text
+[PASTE FULL GITHUB URL HERE]
 ```
 
 ## 7. Résumé URL or file

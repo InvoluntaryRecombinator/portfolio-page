@@ -22,7 +22,9 @@ export const siteContent = {
   statement: "BUILDING TECHNICAL SYSTEMS THAT WORK.",
   introduction:
     "I am a developer focused on building reliable web applications and structured data parsing systems. I prioritize clean database integrations and predictable execution over unnecessary complexity. Away from the keyboard, I am usually bouldering, snowboarding, or open-water diving.",
-  email: "EMAIL@EXAMPLE.COM",
+  email: "jwalb90@gmail.com",
+  linkedin: "https://www.linkedin.com/in/jordan-walsh-dev",
+  github: "https://github.com/InvoluntaryRecombinator",
 };
 
 export const projects: Project[] = [

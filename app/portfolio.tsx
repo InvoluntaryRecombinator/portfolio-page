@@ -1150,40 +1150,16 @@ export default function Portfolio() {
     if (!selectedProject || !overlay.current) return;
 
     const detail = overlay.current;
-    const context = gsap.context(() => {
-      gsap.set(detail, { display: "block", autoAlpha: 1 });
+    const scroller = detail.querySelector<HTMLElement>(".case-scroller");
+    gsap.set(detail, {
+      display: "block",
+      autoAlpha: 1,
+      clipPath: "inset(0% 0 0 0)",
+    });
+    scroller?.scrollTo({ top: 0 });
 
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        gsap.set(detail, { clipPath: "inset(0% 0 0 0)" });
-        return;
-      }
-
-      const titleWords = detail.querySelectorAll(".case-title > .case-title-word > span");
-      const entranceTimeline = gsap
-        .timeline({ defaults: { ease: "expo.out" } })
-        .fromTo(
-          detail,
-          { clipPath: "inset(100% 0 0 0)" },
-          { clipPath: "inset(0% 0 0 0)", duration: 0.95 },
-        )
-        .from(detail.querySelector(".case-topline"), { scaleX: 0, transformOrigin: "left center", duration: 0.65 }, "-=0.48");
-
-      if (titleWords.length) {
-        entranceTimeline.from(
-          titleWords,
-          { yPercent: 115, duration: 0.78, stagger: 0.05 },
-          "-=0.5",
-        );
-      }
-
-      entranceTimeline
-        .from(detail.querySelectorAll(".case-meta > *"), { y: 20, autoAlpha: 0, duration: 0.5, stagger: 0.06 }, "-=0.48")
-        .from(detail.querySelector(".case-artwork"), { clipPath: "inset(0 0 100% 0)", y: 42, duration: 0.9 }, "-=0.44")
-        .from(detail.querySelector(".case-artwork .artwork"), { scale: 1.1, duration: 1.1 }, "-=0.88");
-    }, detail);
-
-    window.setTimeout(() => closeButton.current?.focus(), 900);
-    return () => context.revert();
+    const focusTimer = window.setTimeout(() => closeButton.current?.focus(), 0);
+    return () => window.clearTimeout(focusTimer);
   }, [selectedProject]);
 
   useEffect(() => {
@@ -1229,9 +1205,9 @@ export default function Portfolio() {
         </div>
         <nav className="site-nav header-reveal" aria-label="Primary navigation">
           <a href="#work">PROJECTS <Arrow diagonal /></a>
-          <a href="#contact">CONTACT <Arrow diagonal /></a>
-          <a href="#contact">LINKEDIN <Arrow diagonal /></a>
-          <a href="#contact">GITHUB <Arrow diagonal /></a>
+          <a href={`mailto:${siteContent.email}`}>CONTACT <Arrow diagonal /></a>
+          <a href={siteContent.linkedin} target="_blank" rel="noreferrer">LINKEDIN <Arrow diagonal /></a>
+          <a href={siteContent.github} target="_blank" rel="noreferrer">GITHUB <Arrow diagonal /></a>
           <a href="#contact">RÉSUMÉ <Arrow diagonal /></a>
         </nav>
       </header>
