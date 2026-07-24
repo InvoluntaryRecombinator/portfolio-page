@@ -24,9 +24,16 @@ export type Project = {
   summary: string;
   visual: VisualKind;
   image?: string;
+  imageWidth?: string;
   caseImage?: string;
+  caseImages?: Array<{
+    src: string;
+    alt: string;
+  }>;
   video?: string;
   videoPoster?: string;
+  videoAutoPlay?: boolean;
+  videoControls?: boolean;
   background: string;
   foreground: string;
   accent: string;
@@ -58,6 +65,7 @@ export const projects: Project[] = [
     visual: "image",
     image: "/assets/projects/grvl/paper-logo-dark.png",
     video: "/assets/projects/grvl/GRVL-video.mp4",
+    videoAutoPlay: true,
     background: "#f0eee7",
     foreground: "#151512",
     accent: "#b8ff30",
@@ -108,7 +116,7 @@ export const projects: Project[] = [
   },
   {
     id: "fleetsync",
-    number: "02",
+    number: "03",
     title: "FLEETSYNC",
     year: "2026",
     summary:
@@ -172,7 +180,7 @@ export const projects: Project[] = [
   },
   {
     id: "surepath",
-    number: "03",
+    number: "02",
     title: "SUREPATH",
     year: "2026",
     summary:
@@ -181,6 +189,8 @@ export const projects: Project[] = [
     image: "/assets/projects/surepath/surepath-arrow-logo.svg",
     video: "/assets/projects/surepath/surepath-video.mp4",
     videoPoster: "/assets/projects/surepath/surepath-video-poster.jpg",
+    videoAutoPlay: false,
+    videoControls: true,
     background: "#f4f1e8",
     foreground: "#0b0b0b",
     accent: "#c9a227",
@@ -194,7 +204,7 @@ export const projects: Project[] = [
         "Purposefully stateless and browser-first: identifying fields remain client-side, while the single networked interview receives only minimized incident context. No accounts, authentication, or persistent database.",
       problem: [
         "Justice-impacted individuals pursuing licensed trades face a paradox: the licensing board won't review a criminal record until you apply, and you can't apply until you've already paid for the training. The answer arrives after the money is spent, so most people never start.",
-        "Several states have created a way to ask first—but the process is paper. Texas requires a request form, a separate questionnaire for every conviction and deferred adjudication no matter how old, a hand-written personal account for each one, and a separate $10 money order per license type. The pathway exists. The paperwork is what stops people from using it.",
+        "Several states have created a way to ask first, but the process remains paper-based. Applicants may face lengthy request forms, a separate questionnaire for every conviction or deferred adjudication no matter how old, and a packet that must be assembled and mailed by hand. The pathway exists. The paperwork is what stops people from using it.",
       ],
       architecture: [
         { label: "Core Stack", value: "React, TypeScript, Vite, Tailwind CSS" },
@@ -244,7 +254,21 @@ export const projects: Project[] = [
       "An AI-assisted grant evaluation workspace that converts dense NOFOs and foundation guidelines into structured eligibility data, deterministic match labels, and source-grounded analysis.",
     visual: "image",
     image: "/assets/projects/cleargrant/cleargrant-document-check.svg",
-    caseImage: "/assets/projects/cleargrant/cleargrant-chat.jpg",
+    imageWidth: "46%",
+    caseImages: [
+      {
+        src: "/assets/projects/cleargrant/cleargrant-intake.png",
+        alt: "ClearGrant document intake interface",
+      },
+      {
+        src: "/assets/projects/cleargrant/cleargrant-matrix.jpg",
+        alt: "ClearGrant opportunity comparison matrix",
+      },
+      {
+        src: "/assets/projects/cleargrant/cleargrant-chat.jpg",
+        alt: "ClearGrant grant detail and context-aware assistant",
+      },
+    ],
     background: "#eef2f4",
     foreground: "#2d3748",
     accent: "#4ade80",

@@ -32,6 +32,8 @@ function ProjectCaseVideo({ project }: { project: Project }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
+    if (!project.videoAutoPlay) return;
+
     const video = videoRef.current;
     if (!video) return;
 
@@ -42,7 +44,7 @@ function ProjectCaseVideo({ project }: { project: Project }) {
     }, 1000);
 
     return () => window.clearTimeout(playbackTimer);
-  }, []);
+  }, [project.videoAutoPlay]);
 
   return (
     <div className="artwork artwork-case-video">
@@ -51,12 +53,47 @@ function ProjectCaseVideo({ project }: { project: Project }) {
         className="project-case-video"
         src={project.video}
         poster={project.videoPoster}
-        autoPlay
-        muted
+        autoPlay={project.videoAutoPlay}
+        controls={project.videoControls}
+        muted={project.videoAutoPlay}
         playsInline
-        preload="auto"
+        preload={project.videoAutoPlay ? "auto" : "metadata"}
         aria-label={`${project.title} project animation`}
       />
+    </div>
+  );
+}
+
+function ProjectCaseGallery({ project }: { project: Project }) {
+  const [activeImage, setActiveImage] = useState(0);
+  const images = project.caseImages ?? [];
+  const image = images[activeImage];
+
+  if (!image) return null;
+
+  const showPrevious = () => {
+    setActiveImage((current) => (current - 1 + images.length) % images.length);
+  };
+
+  const showNext = () => {
+    setActiveImage((current) => (current + 1) % images.length);
+  };
+
+  return (
+    <div className="artwork artwork-case-image artwork-case-gallery">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={image.src} alt={image.alt} />
+      <div className="case-gallery-controls" aria-label={`${project.title} interface gallery`}>
+        <button type="button" onClick={showPrevious} aria-label="Previous screenshot">
+          <span aria-hidden="true">←</span> PREV
+        </button>
+        <span aria-live="polite">
+          {String(activeImage + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}
+        </span>
+        <button type="button" onClick={showNext} aria-label="Next screenshot">
+          NEXT <span aria-hidden="true">→</span>
+        </button>
+      </div>
     </div>
   );
 }
@@ -64,6 +101,10 @@ function ProjectCaseVideo({ project }: { project: Project }) {
 function ProjectArtwork({ project, large = false }: { project: Project; large?: boolean }) {
   if (project.video && large) {
     return <ProjectCaseVideo project={project} />;
+  }
+
+  if (project.caseImages?.length && large) {
+    return <ProjectCaseGallery project={project} />;
   }
 
   if (project.caseImage && large) {
@@ -80,7 +121,11 @@ function ProjectArtwork({ project, large = false }: { project: Project; large?: 
       <div className="artwork artwork-image">
         {/* The source artwork is already export-sized and must preserve its transparency. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={project.image} alt={`${project.title} project logo`} />
+        <img
+          src={project.image}
+          alt={`${project.title} project logo`}
+          style={project.imageWidth ? { width: project.imageWidth } : undefined}
+        />
       </div>
     );
   }
@@ -1380,39 +1425,41 @@ export default function Portfolio() {
           </header>
 
           <div className="project-list">
-            {projects.map((project) => (
-              <article className="project-row" id={`project-${project.id}`} key={project.id}>
-                <button className="project-trigger" onClick={() => openProject(project)}>
-                  <div className="project-media">
-                    <div
-                      className="project-visual"
-                      style={{
-                        "--project-bg": project.background,
-                        "--project-fg": project.foreground,
-                        "--project-accent": project.accent,
-                      } as React.CSSProperties}
-                    >
-                      <ProjectArtwork project={project} />
+            {[...projects]
+              .sort((first, second) => first.number.localeCompare(second.number))
+              .map((project) => (
+                <article className="project-row" id={`project-${project.id}`} key={project.id}>
+                  <button className="project-trigger" onClick={() => openProject(project)}>
+                    <div className="project-media">
+                      <div
+                        className="project-visual"
+                        style={{
+                          "--project-bg": project.background,
+                          "--project-fg": project.foreground,
+                          "--project-accent": project.accent,
+                        } as React.CSSProperties}
+                      >
+                        <ProjectArtwork project={project} />
+                      </div>
+                      <span className="project-media-action project-copy-reveal">
+                        LEARN MORE ABOUT THIS PROJECT <Arrow />
+                      </span>
                     </div>
-                    <span className="project-media-action project-copy-reveal">
-                      LEARN MORE ABOUT THIS PROJECT <Arrow />
-                    </span>
-                  </div>
 
-                  <div className="project-copy">
-                    <div className="project-copy-top project-copy-reveal">
-                      <h3>
-                        PROJECT {project.number.padStart(3, "0")} / {project.title}
-                      </h3>
-                      <span>{project.year}</span>
+                    <div className="project-copy">
+                      <div className="project-copy-top project-copy-reveal">
+                        <h3>
+                          PROJECT {project.number.padStart(3, "0")} / {project.title}
+                        </h3>
+                        <span>{project.year}</span>
+                      </div>
+                      <div className="project-copy-body project-copy-reveal">
+                        <p>{project.summary}</p>
+                      </div>
                     </div>
-                    <div className="project-copy-body project-copy-reveal">
-                      <p>{project.summary}</p>
-                    </div>
-                  </div>
-                </button>
-              </article>
-            ))}
+                  </button>
+                </article>
+              ))}
           </div>
         </section>
 
@@ -1471,7 +1518,7 @@ export default function Portfolio() {
                 </h2>
               )}
               <div
-                className={`case-artwork${selectedProject.video ? " case-artwork-video" : ""}${selectedProject.caseImage ? " case-artwork-interface" : ""}`}
+                className={`case-artwork${selectedProject.video ? " case-artwork-video" : ""}${selectedProject.caseImage || selectedProject.caseImages?.length ? " case-artwork-interface" : ""}`}
               >
                 <ProjectArtwork project={selectedProject} large />
               </div>
