@@ -1680,8 +1680,8 @@ a:focus-visible {
 
 .case-architecture-list span {
   color: var(--muted);
-  font-size: 9px;
-  line-height: 1.35;
+  font-size: clamp(1rem, 1.4vw, 1.35rem);
+  line-height: 1.25;
 }
 
 .case-architecture-list strong {

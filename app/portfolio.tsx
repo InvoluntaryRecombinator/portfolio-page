@@ -1386,7 +1386,6 @@ export default function Portfolio() {
         <nav className="site-nav header-reveal" aria-label="Primary navigation">
           <a href={`mailto:${siteContent.email}`}>CONTACT <Arrow diagonal /></a>
           <a href={siteContent.linkedin} target="_blank" rel="noreferrer">LINKEDIN <Arrow diagonal /></a>
-          <a href="#contact">RÉSUMÉ <Arrow diagonal /></a>
         </nav>
       </header>
 
