@@ -1191,31 +1191,37 @@ export default function Portfolio() {
 
       introTimeline
         .set(".intro", { autoAlpha: 1 })
-        .from(".intro-grid-master .intro-kicker, .intro-grid-master .intro-count", {
-          y: 18,
-          autoAlpha: 0,
+        .to(".intro-grid-master .intro-kicker, .intro-grid-master .intro-count", {
+          y: 0,
+          autoAlpha: 1,
           duration: 0.45,
           stagger: 0.08,
         })
-        .from(
-          ".intro-grid-master .intro-word > span",
+        .to(
+          ".intro-grid-master .intro-word:first-child > span",
           {
-            yPercent: 120,
-            rotate: 2,
-            duration: 0.75,
-            stagger: 0.1,
+            x: 0,
+            duration: 0.76,
             ease: "expo.out",
           },
           "-=0.18",
         )
-        .from(
+        .to(
+          ".intro-grid-master .intro-word-right > span",
+          {
+            x: 0,
+            duration: 0.76,
+            ease: "expo.out",
+          },
+          "-=0.12",
+        )
+        .to(
           ".intro-grid-master .intro-foot span",
-          { y: 12, autoAlpha: 0, duration: 0.4, stagger: 0.08 },
+          { y: 0, autoAlpha: 1, duration: 0.4, stagger: 0.08 },
           "-=0.3",
         )
-        .fromTo(
+        .to(
           ".intro-grid-master .intro-accent",
-          { scaleX: 0, transformOrigin: "left center" },
           { scaleX: 1, duration: 0.5, ease: "expo.inOut" },
           "-=0.25",
         )
