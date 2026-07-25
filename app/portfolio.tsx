@@ -1381,14 +1381,11 @@ export default function Portfolio() {
             <span className="availability-dot" aria-hidden="true" />
             {siteContent.availability}
           </span>
-          <a className="site-name" href="#top" aria-label="Back to top">
-            {siteContent.name}
-          </a>
+          <span className="site-name">{siteContent.name}</span>
         </div>
         <nav className="site-nav header-reveal" aria-label="Primary navigation">
           <a href={`mailto:${siteContent.email}`}>CONTACT <Arrow diagonal /></a>
           <a href={siteContent.linkedin} target="_blank" rel="noreferrer">LINKEDIN <Arrow diagonal /></a>
-          <a href={siteContent.github} target="_blank" rel="noreferrer">GITHUB <Arrow diagonal /></a>
           <a href="#contact">RÉSUMÉ <Arrow diagonal /></a>
         </nav>
       </header>
