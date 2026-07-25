@@ -2,6 +2,7 @@ export type VisualKind = "image" | "fleetsync" | "type" | "grid" | "orbit";
 
 export type CaseStudy = {
   liveUrl: string;
+  liveLabel?: string;
   sourceUrl?: string;
   context?: string;
   contextLabel?: string;
@@ -198,6 +199,7 @@ export const projects: Project[] = [
       "SurePath uses a deliberately stateless, browser-first architecture to generate state licensing packets while minimizing the sensitive data that reaches the network.",
     caseStudy: {
       liveUrl: "https://www.asurepath.com",
+      liveLabel: "VIEW LIVE SITE",
       sourceUrl: "https://github.com/InvoluntaryRecombinator/surepath",
       contextLabel: "PRIVACY MODEL",
       context:

@@ -192,6 +192,7 @@ function CaseStudyDetails({ project }: { project: Project }) {
     context,
     contextLabel,
     execution,
+    liveLabel,
     liveUrl,
     problem,
     sourceUrl,
@@ -206,7 +207,7 @@ function CaseStudyDetails({ project }: { project: Project }) {
           aria-label={`${project.title} project links`}
         >
           <a href={liveUrl} target="_blank" rel="noreferrer">
-            VIEW LIVE DEMO <Arrow diagonal />
+            {liveLabel ?? "VIEW LIVE DEMO"} <Arrow diagonal />
           </a>
           {sourceUrl && (
             <a href={sourceUrl} target="_blank" rel="noreferrer">
