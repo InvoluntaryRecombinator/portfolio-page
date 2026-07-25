@@ -1227,6 +1227,7 @@ export default function Portfolio() {
         )
         .set(".intro-panel-content", { autoAlpha: 1 }, "+=1.3")
         .set(".intro-grid-master", { autoAlpha: 0 }, "<")
+        .set(".intro", { backgroundColor: "transparent" }, "<")
         .to(
           ".intro-panel",
           {
