@@ -273,7 +273,7 @@ function IntroContent({ master = false }: { master?: boolean }) {
   return (
     <div className={`intro-grid ${master ? "intro-grid-master" : ""}`}>
       <span className="intro-kicker">PORTFOLIO / INDEX</span>
-      <span className="intro-count">001—004</span>
+      <span className="intro-count">V1.0</span>
       <div className="intro-title">
         <span className="intro-word"><span>JORDON</span></span>
         <span className="intro-word intro-word-right"><span>WALSH</span></span>

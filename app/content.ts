@@ -49,7 +49,7 @@ export const siteContent = {
   availability: "AVAILABLE FOR SELECTED WORK",
   statement: "BUILDING TECHNICAL SYSTEMS THAT WORK.",
   introduction:
-    "I am a pragmatic developer focused on building lightweight web applications, data parsing pipelines, and automation systems. I prioritize efficient architecture and cost-control—whether that means leveraging LLMs for unstructured data, utilizing native browser APIs, or knowing when not to write expensive custom code. Away from the keyboard, I try to spend time swimming, snowboarding, or cooking.",
+    "I'm currently focused on building web applications — mostly practical tools and automations. Recent work ranges from browser-based tools to automation workflows. Away from the keyboard, I enjoy swimming, snowboarding, and cooking.",
   email: "jwalb90@gmail.com",
   linkedin: "https://www.linkedin.com/in/jordan-walsh-dev",
   github: "https://github.com/InvoluntaryRecombinator",
