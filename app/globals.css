@@ -1727,15 +1727,15 @@ a:focus-visible {
 
 .case-architecture-list span {
   color: var(--muted);
-  font-size: clamp(1rem, 1.4vw, 1.35rem);
-  line-height: 1.25;
+  font-size: clamp(1.45rem, 2.35vw, 3rem);
+  line-height: 1.15;
 }
 
 .case-architecture-list strong {
-  font-size: clamp(1rem, 1.4vw, 1.35rem);
+  font-size: clamp(1.45rem, 2.35vw, 3rem);
   font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
 }
 
 .case-execution-list li {
@@ -1757,19 +1757,19 @@ a:focus-visible {
 
 .case-execution-list h4 {
   margin: 0;
-  font-size: clamp(1.15rem, 1.8vw, 1.75rem);
-  font-weight: 520;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.45rem, 2.35vw, 3rem);
+  font-weight: 560;
+  letter-spacing: -0.035em;
   line-height: 1.05;
 }
 
 .case-execution-list p {
-  max-width: 790px;
+  max-width: 1000px;
   margin: 18px 0 0;
   color: #3f3f3a;
-  font-size: clamp(0.95rem, 1.1vw, 1.08rem);
-  letter-spacing: -0.012em;
-  line-height: 1.55;
+  font-size: clamp(1.45rem, 2.35vw, 3rem);
+  letter-spacing: -0.035em;
+  line-height: 1.15;
 }
 
 .case-end > span {
@@ -2295,6 +2295,12 @@ a:focus-visible {
     top: 22px;
   }
 
+  .case-architecture-list span,
+  .case-architecture-list strong {
+    font-size: clamp(1.3rem, 5.8vw, 1.55rem);
+    line-height: 1.2;
+  }
+
   .case-execution-list li {
     grid-template-columns: 34px minmax(0, 1fr);
     gap: 10px;
@@ -2302,12 +2308,13 @@ a:focus-visible {
   }
 
   .case-execution-list h4 {
-    font-size: 1.25rem;
+    font-size: clamp(1.3rem, 5.8vw, 1.55rem);
   }
 
   .case-execution-list p {
     margin-top: 14px;
-    font-size: 0.95rem;
+    font-size: clamp(1.3rem, 5.8vw, 1.55rem);
+    line-height: 1.2;
   }
 
   .case-end {
