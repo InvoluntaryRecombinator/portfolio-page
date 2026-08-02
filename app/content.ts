@@ -257,8 +257,8 @@ export const projects: Project[] = [
     summary:
       "An AI-assisted grant evaluation workspace that converts dense NOFOs and foundation guidelines into structured eligibility data, deterministic match labels, and source-grounded analysis.",
     visual: "image",
-    image: "/assets/projects/cleargrant/cleargrant-document-check.svg",
-    imageWidth: "46%",
+    image: "/assets/projects/cleargrant/cleargrant-logo.png",
+    imageWidth: "58%",
     caseImages: [
       {
         src: "/assets/projects/cleargrant/cleargrant-intake.png",
