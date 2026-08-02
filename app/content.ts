@@ -21,6 +21,7 @@ export type Project = {
   id: string;
   number: string;
   title: string;
+  expandedTitle?: string;
   year: string;
   summary: string;
   visual: VisualKind;
@@ -60,6 +61,7 @@ export const projects: Project[] = [
     id: "grvl",
     number: "01",
     title: "GRVL",
+    expandedTitle: "Gemini Recursive Voice Loop",
     year: "2026",
     summary:
       "A hands-free Chrome extension that routes speech through Gemini’s primary text interface, preserving its full intelligence, Workspace integrations, memory, and generation tools.",

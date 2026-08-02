@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects, Project, siteContent } from "./content";
@@ -1510,7 +1510,18 @@ export default function Portfolio() {
 
             <section className="case-hero">
               <div className="case-meta">
-                <span>PROJECT / {selectedProject.number}</span>
+                <span>
+                  PROJECT {selectedProject.number.padStart(3, "0")} /{" "}
+                  {selectedProject.expandedTitle
+                    ? selectedProject.expandedTitle.split(" ").map((word, index) => (
+                        <Fragment key={`${word}-${index}`}>
+                          {index > 0 && " "}
+                          <strong>{word.charAt(0)}</strong>
+                          {word.slice(1)}
+                        </Fragment>
+                      ))
+                    : selectedProject.title}
+                </span>
                 <span>{selectedProject.year}</span>
               </div>
               {selectedProject.visual !== "image" && selectedProject.visual !== "fleetsync" && (
@@ -1530,7 +1541,10 @@ export default function Portfolio() {
             <section className="case-body">
               <CaseStudyDetails project={selectedProject} />
               <div className="case-end">
-                <span>END OF PROJECT / {selectedProject.number}</span>
+                <span>
+                  END OF PROJECT {selectedProject.number.padStart(3, "0")} /{" "}
+                  {selectedProject.title}
+                </span>
                 <button onClick={closeProject}>BACK TO PROJECTS <Arrow /></button>
               </div>
             </section>
