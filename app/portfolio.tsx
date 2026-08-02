@@ -201,7 +201,6 @@ function CaseStudyDetails({ project }: { project: Project }) {
   return (
     <div className="case-details">
       <header className="case-details-header">
-        <span>PROJECT DETAILS / {project.number}</span>
         <nav
           className={`case-project-links${sourceUrl ? "" : " is-single"}`}
           aria-label={`${project.title} project links`}
@@ -215,6 +214,7 @@ function CaseStudyDetails({ project }: { project: Project }) {
             </a>
           )}
         </nav>
+        <h2 className="case-details-title">PROJECT DETAILS</h2>
       </header>
 
       {context && (

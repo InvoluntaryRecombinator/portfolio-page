@@ -1583,11 +1583,14 @@ a:focus-visible {
 }
 
 .case-details-header {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 42px 0;
+  gap: 48px;
+  padding: 42px 0 52px;
 }
 
-.case-details-header > span,
+.case-details-title,
 .case-detail-label,
 .case-project-links a,
 .case-architecture-list span,
@@ -1597,20 +1600,23 @@ a:focus-visible {
   text-transform: uppercase;
 }
 
-.case-details-header > span {
-  grid-column: 1 / 5;
-  font-size: 10px;
+.case-details-title {
+  margin: 0;
+  font-size: clamp(1.45rem, 2.35vw, 3rem);
+  font-weight: 500;
+  line-height: 1.1;
+  text-align: center;
 }
 
 .case-project-links {
-  display: grid;
-  grid-column: 5 / 13;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
 }
 
-.case-project-links.is-single {
-  grid-template-columns: 1fr;
+.case-project-links a {
+  flex: 0 1 360px;
 }
 
 .case-project-links a {
@@ -2237,8 +2243,6 @@ a:focus-visible {
     padding: 34px 0;
   }
 
-  .case-details-header > span,
-  .case-project-links,
   .case-detail-label,
   .case-detail-content,
   .case-project-context span,
@@ -2246,16 +2250,22 @@ a:focus-visible {
     grid-column: 1 / 13;
   }
 
-  .case-details-header > span {
-    margin-bottom: 22px;
+  .case-details-header {
+    gap: 30px;
+  }
+
+  .case-details-title {
+    font-size: clamp(1.3rem, 5.8vw, 1.55rem);
   }
 
   .case-project-links {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: 8px;
   }
 
   .case-project-links a {
+    flex: 1 1 auto;
+    width: 100%;
     min-height: 54px;
     padding: 14px;
   }
