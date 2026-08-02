@@ -321,7 +321,7 @@ const skillGroups = [
   {
     id: "languages",
     label: "LANGUAGES & FRAMEWORKS",
-    skills: ["PYTHON", "JAVASCRIPT", "REACT.JS / NODE.JS", "SQL", "JSON"],
+    skills: ["PYTHON", "JAVASCRIPT / TYPESCRIPT", "REACT.JS / NODE.JS", "SQL", "JSON"],
   },
   {
     id: "systems",
