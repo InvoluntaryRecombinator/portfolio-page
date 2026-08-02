@@ -1586,11 +1586,9 @@ a:focus-visible {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 48px;
-  padding: 42px 0 52px;
+  padding: 42px 0;
 }
 
-.case-details-title,
 .case-detail-label,
 .case-project-links a,
 .case-architecture-list span,
@@ -1598,14 +1596,6 @@ a:focus-visible {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-}
-
-.case-details-title {
-  margin: 0;
-  font-size: clamp(1.45rem, 2.35vw, 3rem);
-  font-weight: 500;
-  line-height: 1.1;
-  text-align: center;
 }
 
 .case-project-links {
@@ -1616,7 +1606,7 @@ a:focus-visible {
 }
 
 .case-project-links a {
-  flex: 0 1 360px;
+  flex: 1 1 0;
 }
 
 .case-project-links a {
@@ -2248,14 +2238,6 @@ a:focus-visible {
   .case-project-context span,
   .case-project-context p {
     grid-column: 1 / 13;
-  }
-
-  .case-details-header {
-    gap: 30px;
-  }
-
-  .case-details-title {
-    font-size: clamp(1.3rem, 5.8vw, 1.55rem);
   }
 
   .case-project-links {

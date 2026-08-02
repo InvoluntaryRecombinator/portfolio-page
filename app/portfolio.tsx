@@ -214,7 +214,6 @@ function CaseStudyDetails({ project }: { project: Project }) {
             </a>
           )}
         </nav>
-        <h2 className="case-details-title">PROJECT DETAILS</h2>
       </header>
 
       {context && (
